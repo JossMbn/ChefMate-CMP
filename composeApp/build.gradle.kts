@@ -1,4 +1,6 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -6,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.buildKonfig)
 }
 
 kotlin {
@@ -68,4 +71,33 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+buildkonfig {
+    packageName = "com.jmabilon.chefmate"
+
+    val secureProperties = Properties()
+    val secureFile = rootProject.file("secure.properties")
+
+    if (secureFile.exists()) {
+        secureFile.inputStream().use { secureProperties.load(it) }
+    }
+
+    val supabaseApiKey = "supabaseApiKey"
+
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            supabaseApiKey,
+            "${secureProperties.getProperty("SUPABASE_API_KEY_PRODUCTION", "")}"
+        )
+    }
+
+    defaultConfigs("dev") {
+        buildConfigField(
+            STRING,
+            supabaseApiKey,
+            "${secureProperties.getProperty("SUPABASE_API_KEY_DEVELOPMENT", "")}"
+        )
+    }
 }
