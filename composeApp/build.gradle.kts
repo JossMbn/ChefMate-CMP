@@ -76,28 +76,66 @@ dependencies {
 buildkonfig {
     packageName = "com.jmabilon.chefmate"
 
-    val secureProperties = Properties()
-    val secureFile = rootProject.file("secure.properties")
-
-    if (secureFile.exists()) {
-        secureFile.inputStream().use { secureProperties.load(it) }
+    val secureProperties = Properties().apply {
+        rootProject.file("secure.properties").takeIf { it.exists() }
+            ?.inputStream()
+            ?.use { load(it) }
     }
 
-    val supabaseApiKey = "supabaseApiKey"
+    // =============================================================================================
+    //  Props
+    // =============================================================================================
 
-    defaultConfigs {
-        buildConfigField(
-            STRING,
-            supabaseApiKey,
-            "${secureProperties.getProperty("SUPABASE_API_KEY_PRODUCTION", "")}"
-        )
-    }
+    //  These props are used to read the values from secure.properties and set them as BuildConfig fields.
+    val supabaseUrlDev = "SUPABASE_URL_DEV"
+    val supabaseApiKeyDev = "SUPABASE_API_KEY_DEV"
+    val supabaseUrlProd = "SUPABASE_URL_PROD"
+    val supabaseApiKeyProd = "SUPABASE_API_KEY_PROD"
+
+    // These props are the actual BuildConfig field names that will be generated in the code.
+    val supabaseUrl = "SUPABASE_URL"
+    val supabaseApiKey = "SUPABASE_API_KEY"
+
+
+    // =============================================================================================
+    //  Default
+    // =============================================================================================
+
+    defaultConfigs { /* no-op */ }
+
+    // =============================================================================================
+    //  Development
+    // =============================================================================================
 
     defaultConfigs("dev") {
         buildConfigField(
             STRING,
+            supabaseUrl,
+            "${secureProperties.getProperty(supabaseUrlDev, "")}"
+        )
+
+        buildConfigField(
+            STRING,
             supabaseApiKey,
-            "${secureProperties.getProperty("SUPABASE_API_KEY_DEVELOPMENT", "")}"
+            "${secureProperties.getProperty(supabaseApiKeyDev, "")}"
+        )
+    }
+
+    // =============================================================================================
+    //  Production
+    // =============================================================================================
+
+    defaultConfigs("prod") {
+        buildConfigField(
+            STRING,
+            supabaseUrl,
+            "${secureProperties.getProperty(supabaseUrlProd, "")}"
+        )
+
+        buildConfigField(
+            STRING,
+            supabaseApiKey,
+            "${secureProperties.getProperty(supabaseApiKeyProd, "")}"
         )
     }
 }
