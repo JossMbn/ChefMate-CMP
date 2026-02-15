@@ -17,6 +17,7 @@ kotlin {
         implementation(projects.composeApp)
         implementation(libs.compose.uiToolingPreview)
         implementation(libs.androidx.activity.compose)
+        implementation(libs.core.splashscreen)
 
         // Koin Android
         implementation(libs.koin.android)

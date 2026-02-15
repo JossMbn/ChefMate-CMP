@@ -6,7 +6,7 @@ import io.github.jan.supabase.postgrest.result.PostgrestResult
 /**
  * Extension functions for [PostgrestResult] to decode and map results using a [Mapper].
  */
-suspend inline fun <reified DTO : Any, Domain : Any> PostgrestResult.decodeAndMap(
+inline fun <reified DTO : Any, Domain : Any> PostgrestResult.decodeAndMap(
     mapper: Mapper<Domain, DTO>
 ): Domain {
     val dto: DTO = this.decodeAs<DTO>()
@@ -16,7 +16,7 @@ suspend inline fun <reified DTO : Any, Domain : Any> PostgrestResult.decodeAndMa
 /**
  * Extension function to decode a list of DTOs from [PostgrestResult] and map them to a list of domain models using a [Mapper].
  */
-suspend inline fun <reified DTO : Any, Domain : Any> PostgrestResult.decodeListAndMap(
+inline fun <reified DTO : Any, Domain : Any> PostgrestResult.decodeListAndMap(
     mapper: Mapper<Domain, DTO>
 ): List<Domain> {
     val dtos: List<DTO> = this.decodeList<DTO>()
