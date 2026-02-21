@@ -1,19 +1,24 @@
-package com.jmabilon.chefmate.di
+package com.jmabilon.chefmate.di.data
 
 import com.jmabilon.chefmate.data.authentication.AuthenticationRepositoryImpl
-import com.jmabilon.chefmate.data.authentication.source.remote.AuthenticationRemoteDataSource
-import com.jmabilon.chefmate.data.authentication.source.remote.AuthenticationRemoteDataSourceImpl
+import com.jmabilon.chefmate.data.recipe.RecipeRepositoryImpl
 import com.jmabilon.chefmate.domain.authentication.repository.AuthenticationRepository
+import com.jmabilon.chefmate.domain.recipe.repository.RecipeRepository
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val authenticationModule = module {
+val repositoryModule = module {
 
     // =============================================================================================
-    // Data Layer
+    // Authentication
     // =============================================================================================
 
     singleOf(::AuthenticationRepositoryImpl).bind<AuthenticationRepository>()
-    singleOf(::AuthenticationRemoteDataSourceImpl).bind<AuthenticationRemoteDataSource>()
+
+    // =============================================================================================
+    // Recipe
+    // =============================================================================================
+
+    singleOf(::RecipeRepositoryImpl).bind<RecipeRepository>()
 }

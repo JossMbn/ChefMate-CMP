@@ -113,7 +113,7 @@ class RecipeRemoteDataSourceImpl(
     override suspend fun deleteCollection(collectionId: String): Result<Unit> {
         return supabaseClient.safeExecution {
             postgrest.rpc(
-                function = CollectionRpcFunction.GetRecipesByCollectionId.functionName,
+                function = CollectionRpcFunction.DeleteCollection.functionName,
                 parameters = GetCollectionRecipesParameter(collectionId = collectionId)
             )
         }

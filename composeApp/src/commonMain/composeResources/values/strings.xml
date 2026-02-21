@@ -1,0 +1,11 @@
+<resources>
+    <!-- Common -->
+    <string name="app_name">ChefMate</string>
+    <string name="get_started">Get Started</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="sign_in">Sign In</string>
+
+    <!-- WelcomePage -->
+    <string name="welcome_page_title">Your AI Culinary Companion</string>
+    <string name="welcome_page_description">Organize recipes, scan your favorites, and cook like a pro with AI.</string>
+</resources>

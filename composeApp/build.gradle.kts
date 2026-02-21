@@ -41,7 +41,7 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
 
             // Koin
-            implementation(libs.bundles.common.koin)
+            api(libs.bundles.common.koin)
 
             // Lifecycle
             implementation(libs.bundles.androidx.lifecycle.compose)

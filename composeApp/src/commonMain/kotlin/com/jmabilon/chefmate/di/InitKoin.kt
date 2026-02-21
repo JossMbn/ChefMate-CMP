@@ -1,5 +1,9 @@
 package com.jmabilon.chefmate.di
 
+import com.jmabilon.chefmate.di.data.dataSourceModule
+import com.jmabilon.chefmate.di.data.repositoryModule
+import com.jmabilon.chefmate.di.domain.useCaseModule
+import com.jmabilon.chefmate.di.presentation.viewModelModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 
@@ -13,9 +17,11 @@ fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
         config?.invoke(this)
         modules(
-            supabaseModule,
-            authenticationModule,
-            recipeModule
+            appModule,
+            viewModelModule,
+            useCaseModule,
+            repositoryModule,
+            dataSourceModule
         )
     }
 }
