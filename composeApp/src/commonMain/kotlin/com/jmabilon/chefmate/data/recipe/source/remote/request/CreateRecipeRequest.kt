@@ -18,8 +18,9 @@ data class CreateRecipeRequest(
     val servings: Int = 1,
     val difficulty: Int? = null,
     val ingredients: List<CreateIngredientRequest> = emptyList(),
-    @SerialName("instruction_sections")
-    val instructionSections: List<CreateSectionRequest> = emptyList()
+    @SerialName("ingredient_sections")
+    val ingredientSections: List<CreateIngredientSectionRequest> = emptyList(),
+    val instructions: List<CreateInstructionRequest>
 )
 
 // =================================================================================================
@@ -36,8 +37,9 @@ class CreateRecipeRequestMapper : Mapper<CreateRecipeRequest, RecipeDomain> {
             cookTimeSeconds = input.cookTime,
             servings = input.servings,
             difficulty = RecipeDifficulty.toValue(input.difficulty),
-            ingredients = input.ingredients.toRequest(),
-            instructionSections = input.instructionSections.toRequest()
+            ingredients = input.mainIngredients.toRequest(),
+            ingredientSections = input.ingredientSections.toRequest(),
+            instructions = input.instructions.toRequest()
         )
     }
 }

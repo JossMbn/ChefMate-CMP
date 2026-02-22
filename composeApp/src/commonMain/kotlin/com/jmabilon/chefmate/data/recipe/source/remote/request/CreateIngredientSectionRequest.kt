@@ -1,29 +1,29 @@
 package com.jmabilon.chefmate.data.recipe.source.remote.request
 
 import com.jmabilon.chefmate.core.domain.Mapper
-import com.jmabilon.chefmate.domain.recipe.model.RecipeInstructionSectionDomain
+import com.jmabilon.chefmate.domain.recipe.model.RecipeIngredientSectionDomain
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateSectionRequest(
+data class CreateIngredientSectionRequest(
     val name: String,
     @SerialName("sort_order")
     val sortOrder: Int,
-    val instructions: List<CreateInstructionRequest> = emptyList()
+    val ingredients: List<CreateIngredientRequest> = emptyList()
 )
 
 // =================================================================================================
 // Request Mapper
 // =================================================================================================
 
-class CreateSectionRequestMapper : Mapper<CreateSectionRequest, RecipeInstructionSectionDomain> {
+class CreateSectionRequestMapper : Mapper<CreateIngredientSectionRequest, RecipeIngredientSectionDomain> {
 
-    override fun convert(input: RecipeInstructionSectionDomain): CreateSectionRequest {
-        return CreateSectionRequest(
+    override fun convert(input: RecipeIngredientSectionDomain): CreateIngredientSectionRequest {
+        return CreateIngredientSectionRequest(
             name = input.name,
             sortOrder = input.sortOrder,
-            instructions = input.instructions.toRequest()
+            ingredients = input.ingredients.toRequest()
         )
     }
 }
@@ -32,6 +32,6 @@ class CreateSectionRequestMapper : Mapper<CreateSectionRequest, RecipeInstructio
 // Request Mapper Extensions
 // =================================================================================================
 
-fun List<RecipeInstructionSectionDomain>.toRequest(): List<CreateSectionRequest> {
+fun List<RecipeIngredientSectionDomain>.toRequest(): List<CreateIngredientSectionRequest> {
     return CreateSectionRequestMapper().convert(this)
 }

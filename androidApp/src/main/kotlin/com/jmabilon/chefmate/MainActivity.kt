@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
             val isReady by remember {
                 derivedStateOf {
                     authStatus != AuthenticationStatus.Initializing
+                        && authStatus != AuthenticationStatus.RefreshFailure
                 }
             }
 

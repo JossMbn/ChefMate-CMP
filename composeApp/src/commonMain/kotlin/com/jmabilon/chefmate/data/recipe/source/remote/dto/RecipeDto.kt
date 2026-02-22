@@ -24,9 +24,11 @@ data class RecipeDto(
     val createdAt: String,
     @SerialName("updated_at")
     val updatedAt: String,
-    val ingredients: List<RecipeIngredientDto>,
-    val sections: List<RecipeInstructionSectionDto>,
-    val collections: List<RecipeCollectionInfoDto>
+    val ingredients: List<RecipeIngredientDto> = emptyList(),
+    @SerialName("ingredient_sections")
+    val ingredientSections: List<RecipeIngredientSectionDto> = emptyList(),
+    val instructions: List<RecipeInstructionDto> = emptyList(),
+    val collections: List<RecipeCollectionInfoDto> = emptyList()
 )
 
 // =================================================================================================
@@ -44,8 +46,9 @@ class RecipeMapper : Mapper<RecipeDomain, RecipeDto> {
             cookTime = input.cookTimeSeconds,
             servings = input.servings,
             difficulty = RecipeDifficulty.fromValue(input.difficulty),
-            ingredients = input.ingredients.toDomain(),
-            instructionSections = input.sections.toDomain(),
+            mainIngredients = input.ingredients.toDomain(),
+            ingredientSections = input.ingredientSections.toDomain(),
+            instructions = input.instructions.toDomain(),
             collections = input.collections.toDomain()
         )
     }

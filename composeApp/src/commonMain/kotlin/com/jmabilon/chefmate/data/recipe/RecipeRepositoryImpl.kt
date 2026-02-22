@@ -70,4 +70,28 @@ class RecipeRepositoryImpl(
             collectionIds = collectionIds
         )
     }
+
+    // =============================================================================================
+    // Images
+    // =============================================================================================
+
+    override suspend fun getRecipeImageUrl(imagePath: String): Result<String> {
+        return recipeRemoteDataSource.fetchRecipeImageUrl(imagePath = imagePath)
+    }
+
+    override suspend fun uploadRecipeImage(
+        recipeId: String,
+        imageData: ByteArray,
+        extension: String
+    ): Result<String> {
+        return recipeRemoteDataSource.uploadRecipeImage(
+            recipeId = recipeId,
+            imageData = imageData,
+            extension = extension
+        )
+    }
+
+    override suspend fun deleteRecipeImage(imagePath: String): Result<Unit> {
+        return recipeRemoteDataSource.deleteRecipeImage(imagePath = imagePath)
+    }
 }

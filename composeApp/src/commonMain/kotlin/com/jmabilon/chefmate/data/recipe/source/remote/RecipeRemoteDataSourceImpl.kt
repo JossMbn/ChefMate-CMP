@@ -21,12 +21,18 @@ import com.jmabilon.chefmate.data.recipe.source.remote.request.toRequest
 import com.jmabilon.chefmate.domain.recipe.model.CollectionDomain
 import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.rpc
+import io.github.jan.supabase.storage.storage
 
 class RecipeRemoteDataSourceImpl(
     private val supabaseClient: SupabaseClient
 ) : RecipeRemoteDataSource {
+
+    companion object {
+        private const val RECIPE_BUCKET_ID = "recipe-images"
+    }
 
     // =============================================================================================
     // Recipes
@@ -78,7 +84,7 @@ class RecipeRemoteDataSourceImpl(
         return supabaseClient.safeExecution {
             postgrest.rpc(
                 function = RecipeRpcFunction.UpdateRecipe.functionName,
-                parameters = recipe
+                parameters = recipe.toRequest()
             )
                 .decodeAndMap(mapper = RecipeMapper())
         }
@@ -148,6 +154,40 @@ class RecipeRemoteDataSourceImpl(
                 function = CollectionRpcFunction.MoveRecipeToCollections.functionName,
                 parameters = parameters
             )
+        }
+    }
+
+    // =============================================================================================
+    // Images
+    // =============================================================================================
+
+    override suspend fun fetchRecipeImageUrl(imagePath: String): Result<String> {
+        return supabaseClient.safeExecution {
+            storage.from(RECIPE_BUCKET_ID)
+                .publicUrl(path = imagePath)
+        }
+    }
+
+    override suspend fun uploadRecipeImage(
+        recipeId: String,
+        imageData: ByteArray,
+        extension: String
+    ): Result<String> {
+        val userId = supabaseClient.auth.currentUserOrNull()?.id
+            ?: return Result.failure(IllegalStateException("User must be authenticated"))
+        val imagePath = "$userId/$recipeId.$extension"
+
+        return supabaseClient.safeExecution {
+            storage.from(RECIPE_BUCKET_ID)
+                .upload(path = imagePath, data = imageData)
+        }
+            .map { imagePath }
+    }
+
+    override suspend fun deleteRecipeImage(imagePath: String): Result<Unit> {
+        return supabaseClient.safeExecution {
+            storage.from(RECIPE_BUCKET_ID)
+                .delete(imagePath)
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.jmabilon.chefmate.domain.recipe.model
 
-data class RecipeInstructionSectionDomain(
+data class RecipeIngredientSectionDomain(
     val name: String,
     val sortOrder: Int,
-    val instructions: List<RecipeInstructionDomain>,
+    val ingredients: List<RecipeIngredientDomain>
 )

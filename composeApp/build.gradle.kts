@@ -15,6 +15,7 @@ kotlin {
     androidLibrary {
         namespace = "com.jmabilon.chefmate.composeApp"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -36,6 +37,11 @@ kotlin {
     }
 
     sourceSets {
+        androidMain.dependencies {
+            // AndroidX
+            implementation(libs.androidx.exifinterface)
+        }
+
         commonMain.dependencies {
             implementation(libs.bundles.common.compose)
             implementation(libs.androidx.navigation.compose)

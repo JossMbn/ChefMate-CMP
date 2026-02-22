@@ -1,4 +1,4 @@
-package com.jmabilon.chefmate.designsystem.component
+package com.jmabilon.chefmate.designsystem.component.button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
@@ -27,6 +28,7 @@ fun CMButton(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary
     ),
+    shape: Shape? = null,
     border: BorderStroke? = null,
     isLoading: Boolean = false,
     leadingContent: @Composable (() -> Unit)? = null,
@@ -40,7 +42,7 @@ fun CMButton(
                 onClick()
             }
         },
-        shape = MaterialTheme.shapes.large,
+        shape = shape ?: MaterialTheme.shapes.large,
         colors = colors,
         border = border,
         contentPadding = PaddingValues(16.dp)
