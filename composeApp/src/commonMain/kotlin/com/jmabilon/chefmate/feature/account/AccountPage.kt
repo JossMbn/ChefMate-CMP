@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jmabilon.chefmate.designsystem.component.CMButton
+import com.jmabilon.chefmate.designsystem.component.button.CMButton
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 import com.jmabilon.chefmate.feature.account.model.AccountAction
 import com.jmabilon.chefmate.feature.account.model.AccountState

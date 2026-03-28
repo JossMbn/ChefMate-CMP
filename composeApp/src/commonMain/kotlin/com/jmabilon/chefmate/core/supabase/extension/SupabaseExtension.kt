@@ -28,7 +28,7 @@ suspend fun <T> SupabaseClient.safeExecution(block: suspend SupabaseClient.() ->
         Result.failure(NetworkError.TimeoutError())
     } catch (_: HttpRequestException) {
         Result.failure(NetworkError.NetworkConnectionError())
-    } catch (_: SerializationException) {
+    } catch (e: SerializationException) {
         Result.failure(NetworkError.SerializationError())
     } catch (e: Exception) {
         Result.failure(NetworkError.Unknown(e.message))

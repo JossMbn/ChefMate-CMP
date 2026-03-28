@@ -1,18 +1,19 @@
 package com.jmabilon.chefmate.designsystem.component.textfield
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jmabilon.chefmate.designsystem.component.FieldLabelContainer
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 
 @Composable
@@ -23,20 +24,17 @@ fun CMTextField(
     label: String? = null,
     hint: String? = null,
     singleLine: Boolean = false,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    leadingContent: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable (() -> Unit)? = null,
+    decorationBox: @Composable ((innerTextField: @Composable () -> Unit) -> Unit)? = null
 ) {
-    Column(
+    FieldLabelContainer(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        label = label
     ) {
-        if (!label.isNullOrEmpty()) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-
         BasicTextField(
             modifier = Modifier.fillMaxWidth(),
             value = value,
@@ -45,12 +43,17 @@ fun CMTextField(
                 color = MaterialTheme.colorScheme.onSurface
             ),
             singleLine = singleLine,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
             visualTransformation = visualTransformation,
-            decorationBox = { innerTextField ->
-                DefaultTextFieldDecoration(
-                    innerTextField = innerTextField,
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            decorationBox = decorationBox ?: { innerTextField ->
+                DefaultFieldDecoration(
+                    innerField = innerTextField,
                     value = value,
-                    hint = hint
+                    hint = hint,
+                    leadingContent = leadingContent,
+                    trailingContent = trailingContent
                 )
             }
         )

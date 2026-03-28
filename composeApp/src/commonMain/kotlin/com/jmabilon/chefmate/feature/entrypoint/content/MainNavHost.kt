@@ -12,8 +12,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.jmabilon.chefmate.core.presentation.ObserveAsEvent
 import com.jmabilon.chefmate.core.presentation.SnackbarController
-import com.jmabilon.chefmate.feature.account.navigation.AccountRoute
 import com.jmabilon.chefmate.feature.account.navigation.accountPage
+import com.jmabilon.chefmate.feature.home.navigation.HomeRoute
+import com.jmabilon.chefmate.feature.home.navigation.homePage
+import com.jmabilon.chefmate.feature.recipe.creation.navigation.manualRecipeCreationPage
 import kotlinx.coroutines.launch
 
 @Composable
@@ -38,9 +40,13 @@ fun MainNavHost(modifier: Modifier = Modifier) {
     ) {
         NavHost(
             navController = navController,
-            startDestination = AccountRoute,
+            startDestination = HomeRoute,
         ) {
+            homePage(controller = navController)
             accountPage(controller = navController)
+
+            // Recipe creation
+            manualRecipeCreationPage(controller = navController)
         }
     }
 }

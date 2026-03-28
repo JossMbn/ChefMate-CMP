@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,11 +20,13 @@ import androidx.compose.ui.unit.dp
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 
 @Composable
-fun DefaultTextFieldDecoration(
+fun DefaultFieldDecoration(
     modifier: Modifier = Modifier,
-    innerTextField: @Composable () -> Unit,
+    innerField: @Composable () -> Unit,
     value: String,
-    hint: String? = null
+    hint: String? = null,
+    leadingContent: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -37,10 +38,11 @@ fun DefaultTextFieldDecoration(
                 shape = MaterialTheme.shapes.large
             )
             .padding(vertical = 14.dp, horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Box {
+        leadingContent?.invoke()
+
+        Box(modifier = Modifier.weight(1f)) {
             if (value.isEmpty() && !hint.isNullOrEmpty()) {
                 Text(
                     text = hint,
@@ -49,22 +51,24 @@ fun DefaultTextFieldDecoration(
                 )
             }
 
-            innerTextField()
+            innerField()
         }
+
+        trailingContent?.invoke()
     }
 }
 
 @Preview
 @Composable
-private fun DefaultTextFieldDecorationPreview() {
+private fun DefaultFieldDecorationPreview() {
     ChefMateTheme {
         val value by remember { mutableStateOf("") }
 
-        DefaultTextFieldDecoration(
+        DefaultFieldDecoration(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            innerTextField = {
+            innerField = {
                 Text(
                     text = value,
                     style = MaterialTheme.typography.bodyMedium,

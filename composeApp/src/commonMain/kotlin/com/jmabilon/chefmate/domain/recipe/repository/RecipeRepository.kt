@@ -30,4 +30,14 @@ interface RecipeRepository {
     suspend fun updateCollection(collectionId: String, newName: String): Result<CollectionDomain>
 
     suspend fun moveRecipeToCollections(recipeId: String, collectionIds: List<String>): Result<Unit>
+
+    // =============================================================================================
+    // Images
+    // =============================================================================================
+
+    suspend fun getRecipeImageUrl(imagePath: String): Result<String>
+
+    suspend fun uploadRecipeImage(recipeId: String, imageData: ByteArray, extension: String): Result<String>
+
+    suspend fun deleteRecipeImage(imagePath: String): Result<Unit>
 }

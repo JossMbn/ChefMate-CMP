@@ -17,7 +17,7 @@ import chefmate.composeapp.generated.resources.Res
 import chefmate.composeapp.generated.resources.already_have_account
 import chefmate.composeapp.generated.resources.get_started
 import chefmate.composeapp.generated.resources.sign_in
-import com.jmabilon.chefmate.designsystem.component.CMButton
+import com.jmabilon.chefmate.designsystem.component.button.CMButton
 import com.jmabilon.chefmate.designsystem.extension.customClickable
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 import org.jetbrains.compose.resources.stringResource

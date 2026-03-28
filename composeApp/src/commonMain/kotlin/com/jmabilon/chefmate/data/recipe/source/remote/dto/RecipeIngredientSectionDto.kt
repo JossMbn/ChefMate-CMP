@@ -1,15 +1,15 @@
 package com.jmabilon.chefmate.data.recipe.source.remote.dto
 
 import com.jmabilon.chefmate.core.domain.Mapper
-import com.jmabilon.chefmate.domain.recipe.model.RecipeInstructionSectionDomain
+import com.jmabilon.chefmate.domain.recipe.model.RecipeIngredientSectionDomain
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecipeInstructionSectionDto(
+data class RecipeIngredientSectionDto(
     val id: String,
     val name: String,
-    val instructions: List<RecipeInstructionDto>,
+    val ingredients: List<RecipeIngredientDto>,
     @SerialName("sort_order")
     val sortOrder: Int
 )
@@ -19,13 +19,13 @@ data class RecipeInstructionSectionDto(
 // =============================================================================================
 
 class RecipeInstructionSectionMapper :
-    Mapper<RecipeInstructionSectionDomain, RecipeInstructionSectionDto> {
+    Mapper<RecipeIngredientSectionDomain, RecipeIngredientSectionDto> {
 
-    override fun convert(input: RecipeInstructionSectionDto): RecipeInstructionSectionDomain =
-        RecipeInstructionSectionDomain(
+    override fun convert(input: RecipeIngredientSectionDto): RecipeIngredientSectionDomain =
+        RecipeIngredientSectionDomain(
             name = input.name,
             sortOrder = input.sortOrder,
-            instructions = input.instructions.toDomain()
+            ingredients = input.ingredients.toDomain()
         )
 }
 
@@ -33,5 +33,5 @@ class RecipeInstructionSectionMapper :
 // Extensions
 // =============================================================================================
 
-fun List<RecipeInstructionSectionDto>.toDomain(): List<RecipeInstructionSectionDomain> =
+fun List<RecipeIngredientSectionDto>.toDomain(): List<RecipeIngredientSectionDomain> =
     RecipeInstructionSectionMapper().convert(this)

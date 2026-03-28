@@ -8,7 +8,8 @@ data class RecipeDomain(
     val cookTime: Int, // en secondes
     val servings: Int,
     val difficulty: RecipeDifficulty?,
-    val ingredients: List<RecipeIngredientDomain>,
-    val instructionSections: List<RecipeInstructionSectionDomain>,
+    val mainIngredients: List<RecipeIngredientDomain>,
+    val ingredientSections: List<RecipeIngredientSectionDomain>,
+    val instructions: List<RecipeInstructionDomain>,
     val collections: List<RecipeCollectionInfoDomain>
 )
