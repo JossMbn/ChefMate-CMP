@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 import com.jmabilon.chefmate.domain.authentication.model.AuthenticationStatus
-import com.jmabilon.chefmate.feature.entrypoint.content.MainNavHost
 import com.jmabilon.chefmate.feature.entrypoint.content.AuthenticationNavHost
+import com.jmabilon.chefmate.feature.entrypoint.content.MainNavHost
 
 @Composable
 fun ChefMateEntrypoint(

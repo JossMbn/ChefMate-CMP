@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chefmate.composeapp.generated.resources.Res
 import chefmate.composeapp.generated.resources.ic_apple
-import chefmate.composeapp.generated.resources.ic_arrow_back_rounded
+import chefmate.composeapp.generated.resources.ic_arrow_back_rounded_outlined
 import chefmate.composeapp.generated.resources.ic_google
 import com.jmabilon.chefmate.designsystem.component.AppLogo
 import com.jmabilon.chefmate.designsystem.component.button.CMButton
@@ -73,7 +73,7 @@ private fun SignInPage(
                 navigationIcon = {
                     IconButton(onClick = navigator::navigateBack) {
                         Icon(
-                            painter = painterResource(Res.drawable.ic_arrow_back_rounded),
+                            painter = painterResource(Res.drawable.ic_arrow_back_rounded_outlined),
                             contentDescription = null
                         )
                     }

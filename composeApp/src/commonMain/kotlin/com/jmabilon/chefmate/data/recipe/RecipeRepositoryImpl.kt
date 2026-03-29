@@ -1,83 +1,91 @@
 package com.jmabilon.chefmate.data.recipe
 
+import com.jmabilon.chefmate.data.recipe.source.cache.RecipeCacheDataSource
 import com.jmabilon.chefmate.data.recipe.source.remote.RecipeRemoteDataSource
-import com.jmabilon.chefmate.domain.recipe.model.CollectionDomain
 import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
 import com.jmabilon.chefmate.domain.recipe.repository.RecipeRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.transformLatest
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class RecipeRepositoryImpl(
-    private val recipeRemoteDataSource: RecipeRemoteDataSource
+    private val recipeRemoteDataSource: RecipeRemoteDataSource,
+    private val recipeCacheDataSource: RecipeCacheDataSource
 ) : RecipeRepository {
 
     // =============================================================================================
-    // Recipe
+    // Observation
+    // =============================================================================================
+
+    override fun observeRecipeById(recipeId: String): Flow<RecipeDomain> =
+        recipeCacheDataSource.observeRecipe(recipeId = recipeId)
+            .distinctUntilChanged()
+            .transformLatest { recipe ->
+                if (recipe == null) {
+                    emit(null)
+                    getRecipeById(recipeId = recipeId)
+                } else {
+                    emit(recipe)
+                }
+            }
+            .filterNotNull()
+
+    // =============================================================================================
+    // CRUD
     // =============================================================================================
 
     override suspend fun getRecipeById(recipeId: String): Result<RecipeDomain> {
         return recipeRemoteDataSource.getRecipeById(recipeId = recipeId)
+            .onSuccess { recipe ->
+                recipeCacheDataSource.cacheRecipe(recipe = recipe)
+            }
     }
 
     override suspend fun createRecipe(
         recipe: RecipeDomain,
         collectionIds: List<String>
     ): Result<RecipeDomain> {
-        return recipeRemoteDataSource.createRecipe(recipe = recipe, collectionIds = collectionIds)
+        return recipeRemoteDataSource.createRecipe(
+            recipe = recipe,
+            collectionIds = collectionIds
+        )
+            .onSuccess { createdRecipe ->
+                recipeCacheDataSource.cacheRecipe(recipe = createdRecipe)
+            }
     }
 
     override suspend fun deleteRecipe(recipeId: String): Result<Unit> {
         return recipeRemoteDataSource.deleteRecipe(recipeId = recipeId)
+            .onSuccess {
+                recipeCacheDataSource.invalidate(recipeId = recipeId)
+                // fetch collections in useCase to update collection recipe counts and trigger collection list refresh
+            }
     }
 
     override suspend fun updateRecipe(
         recipeId: String,
         recipe: RecipeDomain
     ): Result<RecipeDomain> {
-        return recipeRemoteDataSource.updateRecipe(recipeId = recipeId, recipe = recipe)
-    }
-
-    // =============================================================================================
-    // Collections
-    // =============================================================================================
-
-    override suspend fun getCollectionRecipes(collectionId: String): Result<List<RecipeDomain>> {
-        return recipeRemoteDataSource.getCollectionRecipes(collectionId = collectionId)
-    }
-
-    override suspend fun createCollection(collectionName: String): Result<CollectionDomain> {
-        return recipeRemoteDataSource.createCollection(collectionName = collectionName)
-    }
-
-    override suspend fun deleteCollection(collectionId: String): Result<Unit> {
-        return recipeRemoteDataSource.deleteCollection(collectionId = collectionId)
-    }
-
-    override suspend fun updateCollection(
-        collectionId: String,
-        newName: String
-    ): Result<CollectionDomain> {
-        return recipeRemoteDataSource.updateCollection(
-            collectionId = collectionId,
-            newName = newName
-        )
-    }
-
-    override suspend fun moveRecipeToCollections(
-        recipeId: String,
-        collectionIds: List<String>
-    ): Result<Unit> {
-        return recipeRemoteDataSource.moveRecipeToCollections(
+        return recipeRemoteDataSource.updateRecipe(
             recipeId = recipeId,
-            collectionIds = collectionIds
+            recipe = recipe
         )
+            .onSuccess { updatedRecipe ->
+                // Update recipe cache → triggers observeRecipeById and derived flows
+                recipeCacheDataSource.updateRecipe(recipe = updatedRecipe)
+            }
     }
+
 
     // =============================================================================================
     // Images
     // =============================================================================================
 
-    override suspend fun getRecipeImageUrl(imagePath: String): Result<String> {
-        return recipeRemoteDataSource.fetchRecipeImageUrl(imagePath = imagePath)
-    }
+    override suspend fun getRecipeImageUrl(imagePath: String): Result<String> =
+        recipeRemoteDataSource.fetchRecipeImageUrl(imagePath = imagePath)
 
     override suspend fun uploadRecipeImage(
         recipeId: String,

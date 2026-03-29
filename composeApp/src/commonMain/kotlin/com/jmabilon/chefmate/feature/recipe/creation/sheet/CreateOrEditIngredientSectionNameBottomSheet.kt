@@ -20,10 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jmabilon.chefmate.designsystem.component.sheet.BottomSheetFooterButtons
 import com.jmabilon.chefmate.designsystem.component.textfield.CMTextField
 import com.jmabilon.chefmate.designsystem.sheet.BottomSheetContainer
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
-import com.jmabilon.chefmate.feature.recipe.creation.sheet.component.CreateRecipeSheetFooterButtons
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,7 +109,7 @@ private fun CreateOrEditIngredientSectionNameBottomSheetContent(
             )
         )
 
-        CreateRecipeSheetFooterButtons(
+        BottomSheetFooterButtons(
             modifier = Modifier.fillMaxWidth(),
             primaryButtonLabel = "Confirm",
             secondaryButtonLabel = "Cancel",

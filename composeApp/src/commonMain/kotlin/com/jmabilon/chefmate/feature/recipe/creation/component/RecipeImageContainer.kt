@@ -24,8 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import chefmate.composeapp.generated.resources.Res
-import chefmate.composeapp.generated.resources.ic_add_a_photo_rounded
-import chefmate.composeapp.generated.resources.ic_delete_forever_rounded
+import chefmate.composeapp.generated.resources.ic_add_a_photo_rounded_outlined
+import chefmate.composeapp.generated.resources.ic_delete_forever_rounded_outlined
 import com.jmabilon.chefmate.designsystem.extension.customClickable
 import com.jmabilon.chefmate.designsystem.extension.dashedBorder
 import com.jmabilon.chefmate.designsystem.provider.toComposeImageBitmap
@@ -70,7 +70,7 @@ fun RecipeImageContainer(
                 )
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_delete_forever_rounded),
+                    painter = painterResource(Res.drawable.ic_delete_forever_rounded_outlined),
                     contentDescription = null
                 )
             }
@@ -94,7 +94,7 @@ fun RecipeImageContainer(
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary)
                         .padding(10.dp),
-                    painter = painterResource(Res.drawable.ic_add_a_photo_rounded),
+                    painter = painterResource(Res.drawable.ic_add_a_photo_rounded_outlined),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary
                 )

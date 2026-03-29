@@ -1,6 +1,7 @@
 package com.jmabilon.chefmate.designsystem.utils
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import org.jetbrains.compose.resources.PluralStringResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getPluralString
@@ -8,8 +9,10 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
+@Stable
 sealed interface UiText {
     data class DynamicString(val value: String) : UiText
+
     class ResourceString(
         val resource: StringResource,
         vararg val args: Any
@@ -44,5 +47,9 @@ sealed interface UiText {
                 formatArgs = formatArgs
             )
         }
+    }
+
+    companion object {
+        val Empty = DynamicString("")
     }
 }

@@ -1,5 +1,6 @@
 package com.jmabilon.chefmate.domain.recipe.usecase
 
+import com.jmabilon.chefmate.domain.collection.repository.CollectionRepository
 import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
 import com.jmabilon.chefmate.domain.recipe.repository.RecipeRepository
 
@@ -8,7 +9,8 @@ interface CreateManualRecipeUseCase {
 }
 
 class CreateManualRecipeUseCaseImpl(
-    private val recipeRepository: RecipeRepository
+    private val recipeRepository: RecipeRepository,
+    private val collectionRepository: CollectionRepository
 ) : CreateManualRecipeUseCase {
 
     override suspend operator fun invoke(recipe: RecipeDomain): Result<RecipeDomain> {
@@ -16,5 +18,8 @@ class CreateManualRecipeUseCaseImpl(
             recipe = recipe,
             collectionIds = emptyList()
         )
+            .onSuccess {
+                collectionRepository.getCollections()
+            }
     }
 }

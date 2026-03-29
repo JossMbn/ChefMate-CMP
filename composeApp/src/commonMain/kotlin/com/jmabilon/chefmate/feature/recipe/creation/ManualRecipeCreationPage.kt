@@ -32,13 +32,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chefmate.composeapp.generated.resources.Res
-import chefmate.composeapp.generated.resources.ic_group_rounded
-import chefmate.composeapp.generated.resources.ic_link_rounded
-import chefmate.composeapp.generated.resources.ic_schedule_rounded
-import chefmate.composeapp.generated.resources.ic_timer_rounded
+import chefmate.composeapp.generated.resources.ic_group_rounded_outlined
+import chefmate.composeapp.generated.resources.ic_link_rounded_outlined
+import chefmate.composeapp.generated.resources.ic_schedule_rounded_outlined
+import chefmate.composeapp.generated.resources.ic_timer_rounded_outlined
 import com.jmabilon.chefmate.core.presentation.ObserveAsEvent
-import com.jmabilon.chefmate.designsystem.component.CMTopAppBar
 import com.jmabilon.chefmate.designsystem.component.FieldLabelContainer
+import com.jmabilon.chefmate.designsystem.component.appbar.CMTopAppBar
+import com.jmabilon.chefmate.designsystem.component.appbar.TopAppBarBackIcon
 import com.jmabilon.chefmate.designsystem.component.button.AddTextButton
 import com.jmabilon.chefmate.designsystem.component.textfield.CMTextField
 import com.jmabilon.chefmate.designsystem.component.textfield.CMTextFieldIcon
@@ -102,7 +103,9 @@ private fun ManualRecipeCreationPage(
         topBar = {
             CMTopAppBar(
                 title = "New Recipe",
-                onNavigationClick = { navigator.navigateBack() },
+                navigationIcon = {
+                    TopAppBarBackIcon(onClick = navigator::navigateBack)
+                },
                 actions = {
                     TextButton(
                         onClick = { onAction(ManualRecipeCreationAction.OnCreateRecipeClick) }
@@ -195,7 +198,7 @@ private fun ManualRecipeCreationPageContent(
                     hint = "e.g., 10 min",
                     singleLine = true,
                     leadingContent = {
-                        CMTextFieldIcon(icon = painterResource(Res.drawable.ic_schedule_rounded))
+                        CMTextFieldIcon(icon = painterResource(Res.drawable.ic_schedule_rounded_outlined))
                     }
                 )
 
@@ -210,7 +213,7 @@ private fun ManualRecipeCreationPageContent(
                     hint = "e.g., 1 h 30 min",
                     singleLine = true,
                     leadingContent = {
-                        CMTextFieldIcon(icon = painterResource(Res.drawable.ic_timer_rounded))
+                        CMTextFieldIcon(icon = painterResource(Res.drawable.ic_timer_rounded_outlined))
                     }
                 )
             }
@@ -232,7 +235,7 @@ private fun ManualRecipeCreationPageContent(
                     keyboardType = KeyboardType.Number
                 ),
                 leadingContent = {
-                    CMTextFieldIcon(icon = painterResource(Res.drawable.ic_group_rounded))
+                    CMTextFieldIcon(icon = painterResource(Res.drawable.ic_group_rounded_outlined))
                 }
             )
         }
@@ -279,7 +282,7 @@ private fun ManualRecipeCreationPageContent(
                     keyboardType = KeyboardType.Uri
                 ),
                 leadingContent = {
-                    CMTextFieldIcon(icon = painterResource(Res.drawable.ic_link_rounded))
+                    CMTextFieldIcon(icon = painterResource(Res.drawable.ic_link_rounded_outlined))
                 }
             )
         }

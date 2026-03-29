@@ -9,15 +9,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CollectionDto(
     val id: String,
-    @SerialName("user_id")
-    val userId: String,
     val name: String,
     @SerialName("system_type")
     val systemType: String? = null,
+    @SerialName("recipe_count")
+    val recipeCount: Int,
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("updated_at")
-    val updatedAt: String
+    val updatedAt: String,
+    val recipes: List<RecipeDto>? = null
 )
 
 // =================================================================================================
@@ -30,7 +31,11 @@ class CollectionMapper : Mapper<CollectionDomain, CollectionDto> {
         return CollectionDomain(
             id = input.id,
             name = input.name,
-            systemType = CollectionSystemType.fromValue(input.systemType)
+            systemType = CollectionSystemType.fromValue(input.systemType),
+            createdAt = input.createdAt,
+            updatedAt = input.updatedAt,
+            recipeCount = input.recipeCount,
+            recipes = input.recipes.toDomain()
         )
     }
 }

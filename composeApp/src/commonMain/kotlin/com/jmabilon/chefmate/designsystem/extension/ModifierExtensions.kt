@@ -16,10 +16,8 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 // =================================================================================================
@@ -122,7 +120,6 @@ fun Modifier.negativePadding(
     bottom: Dp = 0.dp
 ): Modifier = composed {
     val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
 
     val startPx = with(density) { start.roundToPx() }
     val topPx = with(density) { top.roundToPx() }
@@ -153,22 +150,12 @@ fun Modifier.negativePadding(
 
         val placeable = measurable.measure(newConstraints)
 
-        val width = constraints.maxWidth
-            .takeIf { constraints.hasBoundedWidth }
-            ?: (placeable.width - horizontalExtra)
-
-        val height = constraints.maxHeight
-            .takeIf { constraints.hasBoundedHeight }
-            ?: (placeable.height - verticalExtra)
+        val width = (placeable.width - horizontalExtra).coerceAtLeast(0)
+        val height = (placeable.height - verticalExtra).coerceAtLeast(0)
 
         layout(width, height) {
-            val xOffset = when (layoutDirection) {
-                LayoutDirection.Ltr -> -startPx
-                LayoutDirection.Rtl -> -endPx
-            }
-
             placeable.placeRelative(
-                x = xOffset,
+                x = -startPx,
                 y = -topPx
             )
         }

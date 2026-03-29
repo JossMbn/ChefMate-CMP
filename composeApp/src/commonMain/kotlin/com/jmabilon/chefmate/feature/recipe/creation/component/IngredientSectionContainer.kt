@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import chefmate.composeapp.generated.resources.Res
-import chefmate.composeapp.generated.resources.ic_edit_rounded
+import chefmate.composeapp.generated.resources.ic_edit_rounded_outlined
 import com.jmabilon.chefmate.designsystem.component.button.AddTextButton
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 import com.jmabilon.chefmate.feature.recipe.creation.model.RecipeIngredientSectionUiData
@@ -52,7 +52,7 @@ fun IngredientsSectionContainer(
 
             IconButton(onClick = onEditSection) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_edit_rounded),
+                    painter = painterResource(Res.drawable.ic_edit_rounded_outlined),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onBackground
                 )

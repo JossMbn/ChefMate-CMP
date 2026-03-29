@@ -31,6 +31,7 @@ fun CMButton(
     shape: Shape? = null,
     border: BorderStroke? = null,
     isLoading: Boolean = false,
+    enabled: Boolean = true,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
@@ -45,6 +46,7 @@ fun CMButton(
         shape = shape ?: MaterialTheme.shapes.large,
         colors = colors,
         border = border,
+        enabled = enabled,
         contentPadding = PaddingValues(16.dp)
     ) {
         if (isLoading) {

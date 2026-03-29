@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import chefmate.composeapp.generated.resources.Res
-import chefmate.composeapp.generated.resources.ic_add_rounded
+import chefmate.composeapp.generated.resources.ic_add_rounded_outlined
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 import org.jetbrains.compose.resources.painterResource
 
@@ -32,7 +32,7 @@ fun AddTextButton(
     ) {
         Icon(
             modifier = Modifier.size(20.dp),
-            painter = painterResource(Res.drawable.ic_add_rounded),
+            painter = painterResource(Res.drawable.ic_add_rounded_outlined),
             contentDescription = null
         )
 
