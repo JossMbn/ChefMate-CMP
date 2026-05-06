@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreateCollectionParameter(
-    @SerialName("name") val collectionName: String,
-    @SerialName("system_type") val systemType: String? = null
+    @SerialName("p_name") val collectionName: String,
+    @SerialName("p_system_type") val systemType: String? = null
 )

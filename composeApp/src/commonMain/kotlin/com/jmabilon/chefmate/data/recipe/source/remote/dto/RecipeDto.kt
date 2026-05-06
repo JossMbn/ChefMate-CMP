@@ -53,3 +53,11 @@ class RecipeMapper : Mapper<RecipeDomain, RecipeDto> {
         )
     }
 }
+
+// =================================================================================================
+// Extensions
+// =================================================================================================
+
+fun List<RecipeDto>?.toDomain(): List<RecipeDomain> {
+    return RecipeMapper().convertOrEmpty(this)
+}

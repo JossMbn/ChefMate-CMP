@@ -23,6 +23,7 @@ class RecipeUiDomainMapper : Mapper<RecipeDomain, RecipeUiData> {
             difficulty = input.info.difficulty,
             mainIngredients = input.mainIngredients.map {
                 RecipeIngredientDomain(
+                    id = "",
                     name = it.name,
                     quantity = it.quantity.toDouble(),
                     unit = it.unit,
@@ -35,6 +36,7 @@ class RecipeUiDomainMapper : Mapper<RecipeDomain, RecipeUiData> {
                     name = section.name,
                     ingredients = section.ingredients.map {
                         RecipeIngredientDomain(
+                            id = "",
                             name = it.name,
                             quantity = it.quantity.toDouble(),
                             unit = it.unit,

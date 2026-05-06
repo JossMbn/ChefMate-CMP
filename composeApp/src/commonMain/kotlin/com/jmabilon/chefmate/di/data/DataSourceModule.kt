@@ -2,6 +2,12 @@ package com.jmabilon.chefmate.di.data
 
 import com.jmabilon.chefmate.data.authentication.source.remote.AuthenticationRemoteDataSource
 import com.jmabilon.chefmate.data.authentication.source.remote.AuthenticationRemoteDataSourceImpl
+import com.jmabilon.chefmate.data.collection.source.remote.CollectionRemoteDataSource
+import com.jmabilon.chefmate.data.collection.source.remote.CollectionRemoteDataSourceImpl
+import com.jmabilon.chefmate.data.recipe.source.cache.CollectionCacheDataSource
+import com.jmabilon.chefmate.data.recipe.source.cache.CollectionCacheDataSourceImpl
+import com.jmabilon.chefmate.data.recipe.source.cache.RecipeCacheDataSource
+import com.jmabilon.chefmate.data.recipe.source.cache.RecipeCacheDataSourceImpl
 import com.jmabilon.chefmate.data.recipe.source.remote.RecipeRemoteDataSource
 import com.jmabilon.chefmate.data.recipe.source.remote.RecipeRemoteDataSourceImpl
 import org.koin.core.module.dsl.singleOf
@@ -21,4 +27,12 @@ val dataSourceModule = module {
     // =============================================================================================
 
     singleOf(::RecipeRemoteDataSourceImpl).bind<RecipeRemoteDataSource>()
+    singleOf(::RecipeCacheDataSourceImpl).bind<RecipeCacheDataSource>()
+
+    // =============================================================================================
+    // Collection
+    // =============================================================================================
+
+    singleOf(::CollectionRemoteDataSourceImpl).bind<CollectionRemoteDataSource>()
+    singleOf(::CollectionCacheDataSourceImpl).bind<CollectionCacheDataSource>()
 }

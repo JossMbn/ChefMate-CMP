@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.jmabilon.chefmate.feature.account.navigation.AccountRoute
+import com.jmabilon.chefmate.feature.collection.details.navigation.CollectionDetailsRoute
 import com.jmabilon.chefmate.feature.home.HomeRoot
 import com.jmabilon.chefmate.feature.recipe.creation.navigation.ManualRecipeCreationRoute
 import kotlinx.serialization.Serializable
@@ -27,6 +28,8 @@ interface HomeNavigator {
     fun navigateToCreateRecipePage()
 
     fun navigateToAccountPage()
+
+    fun navigateToCollectionDetailsPage(collectionId: String)
 }
 
 class HomeNavigatorImpl(
@@ -43,6 +46,10 @@ class HomeNavigatorImpl(
 
     override fun navigateToAccountPage() {
         controller?.navigate(AccountRoute)
+    }
+
+    override fun navigateToCollectionDetailsPage(collectionId: String) {
+        controller?.navigate(CollectionDetailsRoute(collectionId = collectionId))
     }
 }
 

@@ -4,8 +4,24 @@
     <string name="get_started">Get Started</string>
     <string name="already_have_account">Already have an account?</string>
     <string name="sign_in">Sign In</string>
+    <string name="delete">Delete</string>
 
     <!-- WelcomePage -->
     <string name="welcome_page_title">Your AI Culinary Companion</string>
     <string name="welcome_page_description">Organize recipes, scan your favorites, and cook like a pro with AI.</string>
+
+    <!-- Common Recipe -->
+    <plurals name="recipe_count">
+        <item quantity="zero">%1$d recipe</item>
+        <item quantity="one">%1$d recipe</item>
+        <item quantity="other">%1$d recipes</item>
+    </plurals>
+    <string name="time_format_hours_minutes">%1$dh %2$d min</string>
+    <string name="time_format_hours_only">%1$dh</string>
+    <string name="time_format_minutes_only">%1$d min</string>
+    <string name="recipe_uncategorized_display_name">Uncategorized</string>
+    <string name="recipe_favorites_display_name">Favorites</string>
+    <string name="recipe_easy_level">Easy</string>
+    <string name="recipe_medium_level">Medium</string>
+    <string name="recipe_hard_level">Hard</string>
 </resources>

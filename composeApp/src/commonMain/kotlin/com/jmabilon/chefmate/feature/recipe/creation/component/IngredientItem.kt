@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import chefmate.composeapp.generated.resources.Res
-import chefmate.composeapp.generated.resources.ic_sticky_note_rounded
+import chefmate.composeapp.generated.resources.ic_sticky_note_rounded_outlined
 import com.jmabilon.chefmate.designsystem.extension.customClickable
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 import com.jmabilon.chefmate.feature.recipe.creation.model.RecipeIngredientUiData
@@ -57,7 +57,7 @@ fun IngredientItem(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(Res.drawable.ic_sticky_note_rounded),
+                    painter = painterResource(Res.drawable.ic_sticky_note_rounded_outlined),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary
                 )

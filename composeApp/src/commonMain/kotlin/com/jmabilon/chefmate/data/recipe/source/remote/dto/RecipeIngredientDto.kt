@@ -25,6 +25,7 @@ class RecipeIngredientMapper : Mapper<RecipeIngredientDomain, RecipeIngredientDt
 
     override fun convert(input: RecipeIngredientDto): RecipeIngredientDomain {
         return RecipeIngredientDomain(
+            id = input.id,
             name = input.name,
             quantity = input.quantity,
             unit = input.unit,

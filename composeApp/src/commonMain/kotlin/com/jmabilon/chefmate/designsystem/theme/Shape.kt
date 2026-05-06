@@ -19,7 +19,7 @@ val Shapes
 
 val Shapes.bottomSheetShape: CornerBasedShape
     @Composable get() {
-        val topCornerSize = CornerSize(6)
+        val topCornerSize = CornerSize(8)
         val bottomCornerSize = CornerSize(0)
 
         return MaterialTheme.shapes.small.copy(

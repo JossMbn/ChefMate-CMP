@@ -1,174 +1,349 @@
-# Copilot Instructions for ChefMate
+# ChefMate — Copilot Instructions
 
 ## Project Overview
 
-ChefMate is a **Kotlin Multiplatform (KMP)** recipe management application targeting **Android** and **iOS**, built with **Compose Multiplatform** for shared UI. The backend is powered by **Supabase** (Auth, Postgrest, Storage, Functions).
+ChefMate is a cross-platform mobile recipe management application targeting Android and iOS,
+built with Kotlin Multiplatform and Compose Multiplatform (shared UI).
 
-- **Package**: `com.jmabilon.chefmate`
-- **Kotlin**: 2.3.20
-- **Compose Multiplatform**: 1.10.3
-- **Min Android SDK**: 24 · **Target/Compile SDK**: 36
+Core features:
+- Create and manage recipes manually
+- Extract recipes from photos, blog URLs, and social media posts via AI (Supabase Edge Function)
+- Organise recipes into named Collections
+- Add/remove recipes from multiple Collections
 
----
+## Tech Stack & Exact Versions
 
-## Project Structure
+| Concern | Library | Version |
+|---|---|---|
+| Language | Kotlin | 2.3.21 |
+| UI | Compose Multiplatform | 1.10.3 |
+| UI Components | Material 3 | 1.10.0-alpha05 |
+| Build | AGP | 9.0.1 |
+| Android minSdk | — | 24 |
+| Android compileSdk / targetSdk | — | 36 |
+| DI | Koin | 4.2.1 |
+| Lifecycle / ViewModel | androidx-lifecycle | 2.10.0 |
+| Navigation | Compose Navigation (JetBrains) | 2.9.2 |
+| Backend | Supabase-kt BOM | 3.6.0 |
+| HTTP engine | Ktor | 3.4.3 |
+| Serialization | kotlinx.serialization | 1.11.0 |
+| Coroutines | kotlinx.coroutines | 1.10.2 |
+| Images | Coil 3 | 3.4.0 |
+| Environment config | BuildKonfig | 0.19.0 |
+| Splash screen | core-splashscreen | 1.2.0 |
 
-```
-composeApp/src/
-├── commonMain/kotlin/com/jmabilon/chefmate/
-│   ├── core/            # Cross-cutting concerns (network, supabase, mappers, presentation utils)
-│   ├── data/            # Repository implementations & data sources (remote) (data layer)
-│   ├── designsystem/    # Theme, reusable UI components, sheets, extensions, utils
-│   ├── di/              # Koin dependency injection modules
-│   ├── domain/          # Domain models, repository interfaces, use cases, mappers (domain layer)
-│   └── feature/         # Feature screens (presentation layer)
-├── androidMain/         # Android-specific implementations (expect/actual)
-└── iosMain/             # iOS-specific implementations (expect/actual)
-```
+## Project Module Structure
 
----
-
-## Architecture — Clean Architecture + MVI
-
-This project follows **Clean Architecture** with an **MVI (Model-View-Intent)** presentation pattern.
-
-### Layers
-
-| Layer | Location | Responsibility |
-|-------|----------|----------------|
-| **Presentation** | `feature/` | Screens, ViewModels, UI state/actions/events, navigation |
-| **Domain** | `domain/` | Use cases, repository interfaces, domain models, mappers |
-| **Data** | `data/` | Repository implementations, remote data sources |
-| **Core** | `core/` | Shared utilities — Supabase client, network error models, base mapper interface, presentation helpers |
-| **Design System** | `designsystem/` | Theme (colors, typography, shapes), reusable components (`CM`-prefixed), sheets, extensions |
-
-### MVI Pattern (per feature)
-
-Each feature follows this structure:
+This is **not** a multi-module Gradle project. There are three modules only:
+- `composeApp/androidMain` — Android entry point (MainActivity, Application class)
+- `composeApp/iosMain` — iOS entry point
+- `composeApp/commonMain` — **all shared code**: UI, domain, data, DI
 
 ```
-feature/<name>/
-├── <Name>Page.kt              # Composable UI (Root + Page + PageContent + Preview)
-├── <Name>ViewModel.kt         # ViewModel with State, Action, Event
-├── model/
-│   ├── <Name>State.kt         # UI state data class (with ContentView enum: Loading, Content)
-│   ├── <Name>Action.kt        # Sealed interface for user actions
-│   └── <Name>Event.kt         # Sealed interface for one-shot events
-└── navigation/
-    └── <Name>Navigation.kt    # Route, Navigator interface, NavigatorImpl, NavGraphBuilder extension
+composeApp/commonMain/kotlin/com/chefmate/
+├── core/
+│   ├── di/               # Root Koin module wiring all feature modules
+│   ├── navigation/       # Root NavHost, top-level graph
+│   ├── theme/            # ChefMateTheme, Color, Type, Shape
+│   ├── ui/               # Shared generic components (buttons, loaders, etc.)
+│   ├── network/          # SupabaseClient factory, safeExecution extension
+│   └── utils/            # Extensions, helpers
+└── feature/
+    └── {featureName}/    # e.g. auth, home, collection, recipe
+        ├── domain/
+        │   ├── model/    # Pure Kotlin data classes — NO serialization annotations
+        │   ├── repository/ # Repository interfaces only
+        │   └── usecase/  # UseCase interfaces + implementations
+        ├── data/
+        │   ├── dto/      # @Serializable DTOs with @SerialName
+        │   ├── mapper/   # Mapper<Domain, Dto> implementations
+        │   ├── datasource/
+        │   │   ├── remote/   # *RemoteDataSource interface + Impl (Supabase)
+        │   │   └── cache/    # *CacheDataSource interface + Impl (reactive cache via CacheEngine)
+        │   └── repository/   # *RepositoryImpl
+        └── presentation/
+            ├── navigation/   # Route, Navigator interface, NavGraphBuilder extension
+            ├── screen/       # *Root, *Page, *Content composables + *ViewModel
+            └── preview/      # Preview-only composables (*Preview.kt files)
 ```
 
----
+## Architecture — Clean Architecture + MVI + UDF
 
-## Key Conventions
+### Mandatory layer rules
 
-### Kotlin & Compose
+- **Domain layer** has zero dependencies on Android, Compose, Supabase, or Ktor.
+- **Data layer** implements domain interfaces. DTOs never leak into domain or presentation.
+- **Presentation layer** depends only on domain (UseCase interfaces and Domain models).
+- Dependency direction is always: `presentation → domain ← data`
 
-- Use **Kotlin** idioms: data classes, sealed interfaces, extension functions, `Result<T>` for error handling.
-- Prefer `sealed interface` over `sealed class` for Action/Event types.
-- Use `data class` for State; include a `ContentView` enum (`Loading`, `Content`, etc.) to manage screen state.
-- Write **Compose Multiplatform** compatible code in `commonMain`. Use `expect`/`actual` for platform-specific implementations in `androidMain`/`iosMain`.
-- Name composable files as `<Name>Page.kt`. Each page file should contain:
-  - `<Name>Root` — public composable that wires ViewModel + Navigator.
-  - `<Name>Page` — private composable receiving state, `onAction` lambda, and navigator.
-  - `<Name>PageContent` — private composable for the inner content.
-  - A `@Preview` composable at the bottom using `ChefMateTheme` and the default state.
-- Use `collectAsStateWithLifecycle()` to observe state in composables.
-- Use `koinViewModel()` to obtain ViewModels in Root composables.
-- Use `MaterialTheme.colorScheme` for theming — never hardcode colors.
-- Prefix reusable design system components with `CM` (e.g., `CMTopAppBar`).
+### MVI pattern — non-negotiable
 
-### ViewModel
+Every screen has exactly:
+- `{Name}State` — `data class`, represents the complete UI state
+- `{Name}Action` — `sealed interface`, user intents sent to the ViewModel
+- `{Name}Event` — `sealed interface`, one-shot events (navigation, snackbar, etc.) — only if needed
+- `{Name}ViewModel` — exposes `state: StateFlow<{Name}State>` and optionally `event: SharedFlow<{Name}Event>`
+- Single public function `onAction(action: {Name}Action)` — the only entry point from the UI
 
-- Extend `androidx.lifecycle.ViewModel`.
-- Expose state via `MutableStateFlow` + `.onStart { }` + `.stateIn(scope, SharingStarted.Lazily, initialValue)`. For complex state composed from multiple flows, use `combine(...)` instead of `.onStart {}`.
-- Expose one-shot events via `MutableSharedFlow` + `.asSharedFlow()` (simple broadcast) or `Channel` + `.receiveAsFlow()` (guaranteed delivery).
-- Accept user interactions through a single `onAction(action: <Name>Action)` function using a `when` expression.
-- Use `@Stable` annotation on State data classes when they contain complex nested types to help Compose skip recomposition.
-- Use `ImmutableList` from `kotlinx.collections.immutable` for list properties in state/UI models to optimize Compose recomposition.
+### ViewModel template
 
-### Navigation
+```kotlin
+class ExampleViewModel(
+    private val exampleUseCase: ExampleUseCase
+) : ViewModel() {
 
-- Use **Jetpack Navigation Compose** (multiplatform variant `org.jetbrains.androidx.navigation`).
-- Define routes as `@Serializable data object <Name>Route` (or `data class` for routes with arguments).
-- Define a `@Stable` `<Name>Navigator` interface with navigation methods.
-- Provide a `<Name>NavigatorImpl(controller: NavController? = null)` class implementing the interface.
-- Register screens via `NavGraphBuilder` extension functions (e.g., `fun NavGraphBuilder.homePage(controller: NavController)`).
+    private val _event = MutableSharedFlow<ExampleEvent>()
+    val event = _event.asSharedFlow()
 
-### Dependency Injection (Koin)
+    private val _state = MutableStateFlow(ExampleState())
+    val state = _state
+        .onStart { loadInitialData() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ExampleState()
+        )
 
-- All DI modules live in `di/`:
-  - `AppModule.kt` — Supabase client singleton.
-  - `di/presentation/ViewModelModule.kt` — `viewModelOf(::…)` registrations.
-  - `di/domain/UseCaseModule.kt` — `factoryOf(::…Impl).bind<…UseCase>()` registrations.
-  - `di/data/RepositoryModule.kt` — `singleOf(::…Impl).bind<…Repository>()` registrations.
-  - `di/data/DataSourceModule.kt` — `singleOf(::…Impl).bind<…DataSource>()` registrations.
-- Use **constructor injection** everywhere. Koin resolves dependencies automatically.
-- When creating a new feature, register its ViewModel, use cases, repository, and data source in the corresponding DI modules.
+    fun onAction(action: ExampleAction) {
+        when (action) {
+            is ExampleAction.OnItemClick -> handleItemClick(action.id)
+        }
+    }
 
-### Domain Layer
+    private fun loadInitialData() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            exampleUseCase()
+                .onSuccess { data -> _state.update { it.copy(isLoading = false, data = data) } }
+                .onFailure { error -> _state.update { it.copy(isLoading = false, error = error) } }
+        }
+    }
+}
+```
 
-- Repository interfaces live in `domain/<feature>/repository/`.
-- Use cases follow the pattern:
-  - An **interface** with `suspend operator fun invoke(…): Result<T>`.
-  - An **Impl class** implementing the interface, injected with the repository.
-- Domain models are suffixed with `Domain` (e.g., `RecipeDomain`, `CollectionDomain`).
-- The `Mapper<OutputType, InputType>` interface in `core/domain/` should be used for data transformations between layers.
-- Domain layer should depend only on core utilities (e.g., mappers, network error models) and not on any data or presentation layer code.
+## Compose Screen Hierarchy
 
-### Data Layer
+Every screen follows this **strict four-level hierarchy**:
 
-- Repository implementations live in `data/<feature>/` and implement the domain interface.
-- Remote data sources live in `data/<feature>/source/remote/` and follow an interface + Impl pattern.
-- Use `Result<T>` for all data operations to propagate success/failure.
-- Supabase is accessed via the injected `SupabaseClient`; use extension functions from `core/supabase/extension/`.
-- Data layer can depend on core utilities (e.g., Supabase client, mappers) but should not depend on presentation layer code.
+### Level 1 — `{Name}Root` (internal to navigation)
+- Sole location for `koinViewModel()` and `collectAsStateWithLifecycle()`
+- Sole location for one-shot event observation via `LaunchedEffect(Unit)`
+- Calls `{Name}Page`, passing state, onAction, and navigator
 
-### Error Handling
+### Level 2 — `{Name}Page` (private)
+- Contains only the `Scaffold`
+- Passes `innerPadding` to `{Name}Content` via `Modifier.padding(innerPadding)`
+- Contains the `Preview` annotated composable
 
-- Use Kotlin `Result<T>` throughout the data and domain layers.
-- Network errors are modeled in `core/network/model/error/NetworkError.kt`.
-- UI text is abstracted via `designsystem/utils/UiText.kt`.
+### Level 3 — `{Name}Content` (private)
+- The body of the page
+- Calls individual Components
+- Handles `when(state.uiState)` branching (Loading / Success / Error / Empty)
 
-### Build Configuration
+### Level 4 — Components (private or shared in `core/ui/`)
+- Stateless, reusable UI pieces
+- Always accept `Modifier` as the first parameter with `Modifier` as default value
 
-- Sensitive keys (Supabase URL/API Key) are stored in `secure.properties` (git-ignored) and injected via **BuildKonfig** plugin.
-- Two flavors: `dev` and `prod` — configured in `composeApp/build.gradle.kts`.
-- Default flavor is `dev` (set in `gradle.properties`: `buildkonfig.flavor=dev`).
-- Use Gradle version catalogs (`gradle/libs.versions.toml`) for all dependency management.
+### Example structure
 
-### Code Style
+```kotlin
+@Composable
+fun ExampleRoot(
+    viewModel: ExampleViewModel = koinViewModel(),
+    navigator: ExampleNavigator
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-- Follow `kotlin.code.style=official`.
-- Use section comment blocks with `=` separators to organize code sections:
-  ```kotlin
-  // =============================================================================================
-  //  Section Name
-  // =============================================================================================
-  ```
-- Keep files focused: one major class/composable per file.
-- Named arguments for function calls with multiple parameters.
-- Use `/* no-op */` for intentionally empty lambdas/blocks.
+    // One-shot events
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is ExampleEvent.ShowError -> { /* show snackbar */ }
+            }
+        }
+    }
 
----
+    ExamplePage(
+        state = state,
+        onAction = viewModel::onAction,
+        navigator = navigator
+    )
+}
 
-## When Adding a New Feature
+@Composable
+private fun ExamplePage(
+    state: ExampleState,
+    onAction: (ExampleAction) -> Unit,
+    navigator: ExampleNavigator
+) {
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        ExampleContent(
+            modifier = Modifier.padding(innerPadding),
+            state = state,
+            onAction = onAction,
+            navigator = navigator
+        )
+    }
+}
 
-1. Create the feature package under `feature/<name>/`.
-2. Add `<Name>Page.kt` with Root, Page, PageContent, and Preview composables.
-3. Add `<Name>ViewModel.kt` with State/Action/Event in `model/`.
-4. Add `<Name>Navigation.kt` in `navigation/` with Route, Navigator, NavigatorImpl, and NavGraphBuilder extension.
-5. If the feature needs data, add domain models, repository interface, use case interface + impl, data source interface + impl, and repository impl.
-6. Register all new classes in the appropriate Koin DI modules.
-7. Wire the navigation in the parent NavHost (`MainNavHost` or `AuthenticationNavHost`).
+@Composable
+private fun ExampleContent(
+    modifier: Modifier = Modifier,
+    state: ExampleState,
+    onAction: (ExampleAction) -> Unit,
+    navigator: ExampleNavigator
+) {
+    when {
+        state.isLoading -> LoadingIndicator()
+        state.error != null -> ErrorState(message = state.error.message)
+        state.items.isEmpty() -> EmptyState()
+        else -> { /* content */ }
+    }
+}
+```
 
-## References
+## Navigation Pattern
 
-- [Kotlin Documentation](https://kotlinlang.org/docs/home.html)
-- [Kotlin Coding Conventions](https://kotlinlang.org/docs/coding-conventions.html)
-- [Coroutine Guide](https://kotlinlang.org/docs/coroutines-guide.html)
-- [KDoc Documentation](https://kotlinlang.org/docs/kotlin-doc.html)
-- [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/)
-- [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)
-- [Supabase Kotlin SDK](https://supabase.com/docs/reference/kotlin/introduction)
-- [Koin Documentation](https://insert-koin.io/docs/reference/introduction)
+Each feature has a `navigation/` package with one file containing:
+1. `@Serializable` route object/class
+2. `{Name}Navigator` interface with navigation functions
+3. `{Name}NavigatorImpl` implementing the interface with a `NavController`
+4. `NavGraphBuilder.{featureName}Page(controller: NavController)` extension
+
+```kotlin
+@Serializable
+data object ExampleRoute
+
+@Stable
+interface ExampleNavigator {
+    fun navigateBack()
+    fun navigateToDetail(id: String)
+}
+
+class ExampleNavigatorImpl(
+    private val controller: NavController? = null
+) : ExampleNavigator {
+    override fun navigateBack() { controller?.navigateUp() }
+    override fun navigateToDetail(id: String) {
+        controller?.navigate(ExampleDetailRoute(id = id))
+    }
+}
+
+fun NavGraphBuilder.examplePage(controller: NavController) {
+    composable<ExampleRoute> {
+        ExampleRoot(navigator = ExampleNavigatorImpl(controller))
+    }
+}
+```
+
+## State Collection — CRITICAL RULE
+
+**Always use `collectAsStateWithLifecycle()`.**
+**Never use `collectAsState()`.**
+
+`collectAsStateWithLifecycle` is Lifecycle-aware and stops collection when the app goes to
+background, preventing unnecessary work and potential leaks. It requires the
+`androidx-lifecycle-runtime-compose` dependency which is already in `libs.versions.toml`.
+
+## Coroutines & Flow Rules
+
+- Use `suspend fun` by default in DataSources, Repositories, and UseCases.
+- Use `Flow` in the Repository/DataSource layer **only** when multiple ViewModels need to
+  observe shared mutable state (e.g. collections count must update on Home when modified
+  in RecipeDetail). In that case, use a dedicated `{Name}CacheDataSource` backed by a
+  `CacheEngine<T>` (from `core/data/cache/`) as the reactive cache. The `CacheEngine` is
+  always a `private val` inside the `Impl` — never injectable. See data-layer instructions
+  for the full pattern.
+- `viewModelScope.launch {}` for fire-and-forget mutations.
+- `viewModelScope.launch {}` + `Flow.collect {}` for subscribing to reactive repositories.
+- Never use `GlobalScope`.
+- Always re-throw `CancellationException` — never catch it silently.
+
+## Supabase Usage
+
+- Always use the BOM: `implementation(platform("io.github.jan-tennert.supabase:bom:3.6.0"))`
+- Active modules: `postgrest-kt`, `auth-kt`, `storage-kt`, `functions-kt`
+- All Supabase calls **must** go through `safeExecution {}` — never write bare try/catch
+  in a DataSource.
+- Prefer `postgrest.rpc()` for complex queries. Direct table access via `postgrest.from()`
+  is acceptable for simple CRUD where no RPC function exists.
+- Ktor engine: `ktor-client-okhttp` on Android, `ktor-client-darwin` on iOS.
+- Never use `supabase-realtime` — it is not part of this project.
+
+## Error Handling
+
+- All failable operations return `Result<T>`.
+- `Result` is propagated up through all layers to the ViewModel.
+- The ViewModel is the first layer that handles errors by updating `{Name}State`.
+- Never swallow a `Result.failure` silently in a DataSource or Repository without logging.
+- Use the existing `safeExecution` + `RestException.toError()` pattern in `core/network/`.
+
+## BuildKonfig — Environment Config
+
+- All API URLs, Supabase keys, and environment flags come from `BuildKonfig`.
+- Never hardcode `https://...supabase.co` or any API key anywhere in the source code.
+- Access config via `BuildConfig.SUPABASE_URL`, `BuildConfig.SUPABASE_ANON_KEY`, etc.
+
+## Recipe Extraction — AI Integration Rule
+
+**Never call an AI API (OpenAI, Gemini, Anthropic, etc.) directly from the client.**
+The extraction pipeline is:
+1. Upload image/URL to Supabase Storage or pass URL to Edge Function
+2. Call Supabase Edge Function via `functions-kt`
+3. Edge Function handles the AI call server-side and returns a structured recipe JSON
+4. Client parses the JSON into a `RecipeDomain` via a Mapper
+
+## Dependency Injection — Koin
+
+- All modules declared in `commonMain`.
+- Per-feature module file: `{feature}Module.kt` in `feature/{name}/`
+- Root DI file in `core/di/AppModule.kt` which aggregates all feature modules.
+- `single {}` for DataSources, Repositories, and UseCases.
+- `viewModelOf(::MyViewModel)` for ViewModels.
+- No `factory {}` unless the object must not be shared.
+
+## Naming Conventions
+
+| Artefact | Convention | Example |
+|---|---|---|
+| Feature package | lowercase | `feature/collection/` |
+| Domain model | `{Name}Domain` | `CollectionDomain` |
+| DTO | `{Name}Dto` | `CollectionDto` |
+| Mapper | `{Name}Mapper` | `CollectionMapper` |
+| Repository interface | `{Name}Repository` | `CollectionRepository` |
+| Repository impl | `{Name}RepositoryImpl` | `CollectionRepositoryImpl` |
+| Remote DataSource interface | `{Name}RemoteDataSource` | `CollectionRemoteDataSource` |
+| Remote DataSource impl | `{Name}RemoteDataSourceImpl` | `CollectionRemoteDataSourceImpl` |
+| Cache DataSource interface | `{Name}CacheDataSource` | `CollectionCacheDataSource` |
+| Cache DataSource impl | `{Name}CacheDataSourceImpl` | `CollectionCacheDataSourceImpl` |
+| UseCase interface | `{Verb}{Name}UseCase` | `CreateCollectionUseCase` |
+| UseCase impl | `{Verb}{Name}UseCaseImpl` | `CreateCollectionUseCaseImpl` |
+| ViewModel | `{Name}ViewModel` | `CollectionViewModel` |
+| State | `{Name}State` | `CollectionState` |
+| Action | `{Name}Action` | `CollectionAction` |
+| Event | `{Name}Event` | `CollectionEvent` |
+| Route | `{Name}Route` | `CollectionRoute` |
+| Navigator interface | `{Name}Navigator` | `CollectionNavigator` |
+| Navigator impl | `{Name}NavigatorImpl` | `CollectionNavigatorImpl` |
+| Root composable | `{Name}Root` | `CollectionRoot` |
+| Page composable | `{Name}Page` | `CollectionPage` |
+| Content composable | `{Name}Content` | `CollectionContent` |
+| Preview file | `{Name}Preview.kt` | `CollectionPreview.kt` |
+
+## Forbidden Patterns
+
+- `collectAsState()` — use `collectAsStateWithLifecycle()` instead
+- Business logic inside a `@Composable` function
+- Hardcoded colors (`Color(0xFF...)`) — use `MaterialTheme.colorScheme`
+- Hardcoded strings in UI — use string resources via `stringResource()`
+- Hardcoded API keys or URLs — use BuildKonfig
+- Direct AI API calls from client code — use Supabase Edge Functions
+- `GlobalScope` — use `viewModelScope` or a provided `CoroutineScope`
+- Catching `CancellationException` without rethrowing
+- DTOs in domain or presentation layer
+- Domain models annotated with `@Serializable`
+- Skipping the `safeExecution {}` wrapper for Supabase calls
+- `Room` or `SQLDelight` without an explicit architectural decision
+- `by lazy` at the top level of a Composable
+- Mutable state (`var`) in a Composable that should be in the ViewModel
