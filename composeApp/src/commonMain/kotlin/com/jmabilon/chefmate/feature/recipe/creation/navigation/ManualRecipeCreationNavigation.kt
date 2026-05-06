@@ -12,7 +12,9 @@ import kotlinx.serialization.Serializable
 // ==================================================================================
 
 @Serializable
-data object ManualRecipeCreationRoute
+data class ManualRecipeCreationRoute(
+    val recipeId: String? = null
+)
 
 // ==================================================================================
 //  Navigator

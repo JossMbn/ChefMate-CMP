@@ -23,6 +23,7 @@ class RecipeInstructionSectionMapper :
 
     override fun convert(input: RecipeIngredientSectionDto): RecipeIngredientSectionDomain =
         RecipeIngredientSectionDomain(
+            id = input.id,
             name = input.name,
             sortOrder = input.sortOrder,
             ingredients = input.ingredients.toDomain()

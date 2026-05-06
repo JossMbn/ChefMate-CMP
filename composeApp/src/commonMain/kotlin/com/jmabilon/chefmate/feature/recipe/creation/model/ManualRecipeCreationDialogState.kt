@@ -1,5 +1,8 @@
 package com.jmabilon.chefmate.feature.recipe.creation.model
 
+import com.jmabilon.chefmate.feature.recipe.creation.model.recipe.RecipeCreationIngredientUiModel
+import com.jmabilon.chefmate.feature.recipe.creation.model.recipe.RecipeCreationInstructionUiModel
+
 sealed interface ManualRecipeCreationDialogState {
     data class CreateOrEditIngredientSectionName(
         val sectionId: String? = null,
@@ -7,16 +10,16 @@ sealed interface ManualRecipeCreationDialogState {
     ) : ManualRecipeCreationDialogState
 
     data class CreateOrEditMainIngredient(
-        val ingredient: RecipeIngredientUiData? = null
+        val ingredient: RecipeCreationIngredientUiModel? = null
     ) : ManualRecipeCreationDialogState
 
     data class CreateOrEditIngredient(
         val sectionId: String,
         val sectionName: String,
-        val ingredient: RecipeIngredientUiData? = null
+        val ingredient: RecipeCreationIngredientUiModel? = null
     ) : ManualRecipeCreationDialogState
 
     data class CreateOrEditInstruction(
-        val instruction: RecipeInstructionUiData? = null
+        val instruction: RecipeCreationInstructionUiModel? = null
     ) : ManualRecipeCreationDialogState
 }

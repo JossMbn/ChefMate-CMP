@@ -5,6 +5,6 @@ data class RecipeIngredientDomain(
     val name: String,
     val quantity: Double?,
     val unit: String?,
-    val preparationNotes: String?,
+    val note: String?,
     val sortOrder: Int
 )

@@ -8,6 +8,7 @@ import com.jmabilon.chefmate.data.recipe.source.remote.model.RecipeTable
 import com.jmabilon.chefmate.data.recipe.source.remote.model.RecipeTableColumn
 import com.jmabilon.chefmate.data.recipe.source.remote.parameter.CreateRecipeParameter
 import com.jmabilon.chefmate.data.recipe.source.remote.parameter.GetRecipeByIdParameter
+import com.jmabilon.chefmate.data.recipe.source.remote.parameter.UpdateRecipeParameter
 import com.jmabilon.chefmate.data.recipe.source.remote.request.toRequest
 import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
 import io.github.jan.supabase.SupabaseClient
@@ -70,12 +71,19 @@ class RecipeRemoteDataSourceImpl(
 
     override suspend fun updateRecipe(
         recipeId: String,
-        recipe: RecipeDomain
+        recipe: RecipeDomain,
+        collectionIds: List<String>
     ): Result<RecipeDomain> {
+        val parameters = UpdateRecipeParameter(
+            recipeId = recipeId,
+            recipe = recipe.toRequest(),
+            collectionIds = collectionIds
+        )
+
         return supabaseClient.safeExecution {
             postgrest.rpc(
                 function = RecipeRpcFunction.UpdateRecipe.functionName,
-                parameters = recipe.toRequest()
+                parameters = parameters
             )
                 .decodeAndMap(mapper = RecipeMapper())
         }

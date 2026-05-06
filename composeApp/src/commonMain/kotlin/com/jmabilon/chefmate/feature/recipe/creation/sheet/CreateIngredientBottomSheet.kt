@@ -13,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -31,18 +32,20 @@ import androidx.compose.ui.unit.dp
 import com.jmabilon.chefmate.designsystem.component.sheet.BottomSheetFooterButtons
 import com.jmabilon.chefmate.designsystem.component.textfield.CMTextField
 import com.jmabilon.chefmate.designsystem.component.textfield.DefaultFieldDecoration
+import com.jmabilon.chefmate.designsystem.extension.negativePadding
 import com.jmabilon.chefmate.designsystem.sheet.BottomSheetContainer
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
-import com.jmabilon.chefmate.feature.recipe.creation.model.RecipeIngredientUiData
+import com.jmabilon.chefmate.feature.recipe.creation.model.recipe.RecipeCreationIngredientUiModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateIngredientBottomSheet(
     modifier: Modifier = Modifier,
     sectionName: String? = null,
-    ingredient: RecipeIngredientUiData?,
+    ingredient: RecipeCreationIngredientUiModel?,
     onDismissRequest: () -> Unit,
-    onConfirmClick: (String, String, String, String) -> Unit
+    onConfirmClick: (String, String, String, String) -> Unit,
+    onDeleteIngredientClick: () -> Unit
 ) {
     BottomSheetContainer(
         modifier = modifier,
@@ -52,7 +55,8 @@ fun CreateIngredientBottomSheet(
             sectionName = sectionName,
             ingredient = ingredient,
             onDismissRequest = dismissRequester,
-            onConfirmClick = onConfirmClick
+            onConfirmClick = onConfirmClick,
+            onDeleteIngredientClick = onDeleteIngredientClick
         )
     }
 }
@@ -61,9 +65,10 @@ fun CreateIngredientBottomSheet(
 private fun CreateIngredientBottomSheetContent(
     modifier: Modifier = Modifier,
     sectionName: String?,
-    ingredient: RecipeIngredientUiData?,
+    ingredient: RecipeCreationIngredientUiModel?,
     onDismissRequest: () -> Unit,
-    onConfirmClick: (String, String, String, String) -> Unit
+    onConfirmClick: (String, String, String, String) -> Unit,
+    onDeleteIngredientClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -84,7 +89,7 @@ private fun CreateIngredientBottomSheetContent(
         )
     }
     var ingredientUnit by remember(ingredient?.unit) { mutableStateOf(ingredient?.unit ?: "") }
-    var ingredientNotes by remember(ingredient?.notes) { mutableStateOf(ingredient?.notes ?: "") }
+    var ingredientNotes by remember(ingredient?.note) { mutableStateOf(ingredient?.note ?: "") }
 
     Column(
         modifier = modifier
@@ -195,6 +200,21 @@ private fun CreateIngredientBottomSheetContent(
             }
         }
 
+        if (isEditing) {
+            TextButton(
+                modifier = Modifier.negativePadding(vertical = 20.dp),
+                onClick = {
+                    onDeleteIngredientClick()
+                    onDismissRequest()
+                }
+            ) {
+                Text(
+                    text = "Delete Ingredient",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+
         BottomSheetFooterButtons(
             modifier = Modifier.fillMaxWidth(),
             primaryButtonLabel = "Confirm",
@@ -222,7 +242,8 @@ private fun CreateIngredientBottomSheetContentPreview() {
             sectionName = "",
             ingredient = null,
             onDismissRequest = { /* no-op */ },
-            onConfirmClick = { _, _, _, _ -> /* no-op */ }
+            onConfirmClick = { _, _, _, _ -> /* no-op */ },
+            onDeleteIngredientClick = { /* no-op */ }
         )
     }
 }

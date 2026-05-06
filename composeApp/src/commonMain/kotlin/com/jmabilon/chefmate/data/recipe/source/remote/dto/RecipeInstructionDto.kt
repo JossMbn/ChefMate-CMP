@@ -2,8 +2,6 @@ package com.jmabilon.chefmate.data.recipe.source.remote.dto
 
 import com.jmabilon.chefmate.core.domain.Mapper
 import com.jmabilon.chefmate.domain.recipe.model.RecipeInstructionDomain
-import com.jmabilon.chefmate.domain.recipe.model.RecipeTemperatureDomain
-import com.jmabilon.chefmate.domain.recipe.model.TemperatureUnit
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -29,25 +27,24 @@ data class RecipeInstructionDto(
 class RecipeInstructionMapper : Mapper<RecipeInstructionDomain, RecipeInstructionDto> {
 
     override fun convert(input: RecipeInstructionDto): RecipeInstructionDomain {
-        val temperature = getRecipeTemperature(input = input)
+        //val temperature = getRecipeTemperature(input = input)
 
         return RecipeInstructionDomain(
+            id = input.id,
             title = input.title,
             instructions = input.instructions,
-            cookDuration = input.cookDurationSeconds,
-            temperature = temperature,
             sortOrder = input.sortOrder,
         )
     }
 
-    private fun getRecipeTemperature(input: RecipeInstructionDto): RecipeTemperatureDomain? {
+    /*private fun getRecipeTemperature(input: RecipeInstructionDto): RecipeTemperatureDomain? {
         if (input.temperatureValue == null || input.temperatureUnit == null) return null
 
         return RecipeTemperatureDomain(
             value = input.temperatureValue,
             unit = TemperatureUnit.fromValue(input.temperatureUnit)
         )
-    }
+    }*/
 }
 
 // =============================================================================================

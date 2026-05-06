@@ -18,13 +18,15 @@ import com.jmabilon.chefmate.domain.collection.usecase.ObserveCollectionsUseCase
 import com.jmabilon.chefmate.domain.collection.usecase.UpdateRecipeCollectionsUseCase
 import com.jmabilon.chefmate.domain.collection.usecase.UpdateRecipeCollectionsUseCaseImpl
 import com.jmabilon.chefmate.domain.recipe.usecase.CreateManualRecipeUseCase
-import com.jmabilon.chefmate.domain.recipe.usecase.CreateManualRecipeUseCaseImpl
-import com.jmabilon.chefmate.domain.recipe.usecase.CreateManualRecipeWithImageUseCase
-import com.jmabilon.chefmate.domain.recipe.usecase.CreateManualRecipeWithImageUseCaseImpl
-import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeById
-import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeByIdImpl
+import com.jmabilon.chefmate.domain.recipe.usecase.CreateOrUpdateRecipeWithImageUseCase
+import com.jmabilon.chefmate.domain.recipe.usecase.CreateOrUpdateRecipeWithImageUseCaseImpl
+import com.jmabilon.chefmate.domain.recipe.usecase.CreateRecipeUseCaseImpl
+import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeByIdUseCase
+import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeByIdUseCaseImpl
 import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeDetailsUseCase
 import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeDetailsUseCaseImpl
+import com.jmabilon.chefmate.domain.recipe.usecase.UpdateRecipeUseCase
+import com.jmabilon.chefmate.domain.recipe.usecase.UpdateRecipeUseCaseImpl
 import com.jmabilon.chefmate.domain.recipe.usecase.UploadRecipeImageUseCase
 import com.jmabilon.chefmate.domain.recipe.usecase.UploadRecipeImageUseCaseImpl
 import com.jmabilon.chefmate.domain.recipe.usecase.ValidateAndPrepareRecipeImageUseCase
@@ -48,12 +50,13 @@ val useCaseModule = module {
     // Recipe
     // =============================================================================================
 
-    factoryOf(::CreateManualRecipeWithImageUseCaseImpl).bind<CreateManualRecipeWithImageUseCase>()
-    factoryOf(::CreateManualRecipeUseCaseImpl).bind<CreateManualRecipeUseCase>()
+    factoryOf(::CreateOrUpdateRecipeWithImageUseCaseImpl).bind<CreateOrUpdateRecipeWithImageUseCase>()
+    factoryOf(::CreateRecipeUseCaseImpl).bind<CreateManualRecipeUseCase>()
+    factoryOf(::UpdateRecipeUseCaseImpl).bind<UpdateRecipeUseCase>()
     factoryOf(::ObserveRecipeDetailsUseCaseImpl).bind<ObserveRecipeDetailsUseCase>()
     factoryOf(::UploadRecipeImageUseCaseImpl).bind<UploadRecipeImageUseCase>()
     factory { createValidateAndPrepareRecipeImageUseCase() }.bind<ValidateAndPrepareRecipeImageUseCase>()
-    factoryOf(::ObserveRecipeByIdImpl).bind<ObserveRecipeById>()
+    factoryOf(::ObserveRecipeByIdUseCaseImpl).bind<ObserveRecipeByIdUseCase>()
     factoryOf(::UpdateRecipeCollectionsUseCaseImpl).bind<UpdateRecipeCollectionsUseCase>()
 
     // =============================================================================================

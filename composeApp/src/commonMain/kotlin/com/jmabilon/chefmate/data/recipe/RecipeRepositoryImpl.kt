@@ -1,5 +1,6 @@
 package com.jmabilon.chefmate.data.recipe
 
+import com.jmabilon.chefmate.data.recipe.source.cache.CollectionCacheDataSource
 import com.jmabilon.chefmate.data.recipe.source.cache.RecipeCacheDataSource
 import com.jmabilon.chefmate.data.recipe.source.remote.RecipeRemoteDataSource
 import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
@@ -13,7 +14,8 @@ import kotlinx.coroutines.flow.transformLatest
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipeRepositoryImpl(
     private val recipeRemoteDataSource: RecipeRemoteDataSource,
-    private val recipeCacheDataSource: RecipeCacheDataSource
+    private val recipeCacheDataSource: RecipeCacheDataSource,
+    private val collectionCacheDataSource: CollectionCacheDataSource
 ) : RecipeRepository {
 
     // =============================================================================================
@@ -61,20 +63,21 @@ class RecipeRepositoryImpl(
         return recipeRemoteDataSource.deleteRecipe(recipeId = recipeId)
             .onSuccess {
                 recipeCacheDataSource.invalidate(recipeId = recipeId)
-                // fetch collections in useCase to update collection recipe counts and trigger collection list refresh
+                collectionCacheDataSource.invalidateAll()
             }
     }
 
     override suspend fun updateRecipe(
         recipeId: String,
-        recipe: RecipeDomain
+        recipe: RecipeDomain,
+        collectionIds: List<String>
     ): Result<RecipeDomain> {
         return recipeRemoteDataSource.updateRecipe(
             recipeId = recipeId,
-            recipe = recipe
+            recipe = recipe,
+            collectionIds = collectionIds
         )
             .onSuccess { updatedRecipe ->
-                // Update recipe cache → triggers observeRecipeById and derived flows
                 recipeCacheDataSource.updateRecipe(recipe = updatedRecipe)
             }
     }

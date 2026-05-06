@@ -45,7 +45,7 @@ class RecipeMapper : Mapper<RecipeDomain, RecipeDto> {
             prepTime = input.prepTimeSeconds,
             cookTime = input.cookTimeSeconds,
             servings = input.servings,
-            difficulty = RecipeDifficulty.fromValue(input.difficulty),
+            difficulty = RecipeDifficulty.fromDtoValue(input.difficulty),
             mainIngredients = input.ingredients.toDomain(),
             ingredientSections = input.ingredientSections.toDomain(),
             instructions = input.instructions.toDomain(),

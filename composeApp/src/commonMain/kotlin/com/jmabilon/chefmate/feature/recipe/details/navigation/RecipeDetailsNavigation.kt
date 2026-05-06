@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.jmabilon.chefmate.feature.collection.selection.navigation.CollectionSelectionRoute
+import com.jmabilon.chefmate.feature.recipe.creation.navigation.ManualRecipeCreationRoute
 import com.jmabilon.chefmate.feature.recipe.details.RecipeDetailsRoot
 import kotlinx.serialization.Serializable
 
@@ -26,6 +27,8 @@ data class RecipeDetailsRoute(
 interface RecipeDetailsNavigator {
     fun navigateBack()
 
+    fun navigateToRecipeEdition(recipeId: String)
+
     fun navigateToCollectionSelection(recipeId: String)
 }
 
@@ -35,6 +38,10 @@ class RecipeDetailsNavigatorImpl(
 
     override fun navigateBack() {
         controller?.navigateUp()
+    }
+
+    override fun navigateToRecipeEdition(recipeId: String) {
+        controller?.navigate(ManualRecipeCreationRoute(recipeId = recipeId))
     }
 
     override fun navigateToCollectionSelection(recipeId: String) {

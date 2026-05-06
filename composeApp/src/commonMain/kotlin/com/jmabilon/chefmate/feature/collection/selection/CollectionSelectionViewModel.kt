@@ -4,9 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.jmabilon.chefmate.core.presentation.SnackbarController
 import com.jmabilon.chefmate.domain.collection.usecase.ObserveCollectionsUseCase
 import com.jmabilon.chefmate.domain.collection.usecase.UpdateRecipeCollectionsUseCase
-import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeById
+import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeByIdUseCase
 import com.jmabilon.chefmate.feature.collection.selection.model.CollectionSelectionAction
 import com.jmabilon.chefmate.feature.collection.selection.model.CollectionSelectionEvent
 import com.jmabilon.chefmate.feature.collection.selection.model.CollectionSelectionState
@@ -26,7 +27,7 @@ import kotlinx.coroutines.launch
 class CollectionSelectionViewModel(
     savedStateHandle: SavedStateHandle,
     observeCollectionsUseCase: ObserveCollectionsUseCase,
-    private val observeRecipeById: ObserveRecipeById,
+    private val observeRecipeByIdUseCase: ObserveRecipeByIdUseCase,
     private val updateRecipeCollectionsUseCase: UpdateRecipeCollectionsUseCase
 ) : ViewModel() {
 
@@ -89,7 +90,7 @@ class CollectionSelectionViewModel(
 
     private fun observeRecipe() {
         viewModelScope.launch {
-            observeRecipeById(recipeId = args.recipeId)
+            observeRecipeByIdUseCase(recipeId = args.recipeId)
                 .map { it.collections }
                 .collect { collections ->
                     val initialRecipeCollections = collections.filter { it.systemType == null }
@@ -120,6 +121,9 @@ class CollectionSelectionViewModel(
             )
                 .onSuccess {
                     _event.send(CollectionSelectionEvent.OnUpdateRecipeCollectionsSuccess)
+                }
+                .onFailure { error ->
+                    SnackbarController.sendError(error = error)
                 }
         }
     }

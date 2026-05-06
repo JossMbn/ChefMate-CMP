@@ -1,7 +1,5 @@
 package com.jmabilon.chefmate.feature.recipe.creation.model
 
-import com.jmabilon.chefmate.domain.recipe.model.RecipeDifficulty
-
 sealed interface ManualRecipeCreationAction {
     // Common Actions
     data object OnCreateRecipeClick : ManualRecipeCreationAction
@@ -9,10 +7,14 @@ sealed interface ManualRecipeCreationAction {
     // Recipe Info Actions
     data class OnTitleChange(val newTitle: String) : ManualRecipeCreationAction
     data class OnImageChange(val newImage: List<Byte>?) : ManualRecipeCreationAction
-    data class OnPrepTimeChange(val newPrepTimeHour: Int, val newPrepTimeMinute: Int) : ManualRecipeCreationAction
-    data class OnCookTimeChange(val newCookTimeHour: Int, val newCookTimeMinute: Int) : ManualRecipeCreationAction
+    data class OnPrepTimeChange(val newPrepTimeHour: Int, val newPrepTimeMinute: Int) :
+        ManualRecipeCreationAction
+
+    data class OnCookTimeChange(val newCookTimeHour: Int, val newCookTimeMinute: Int) :
+        ManualRecipeCreationAction
+
     data class OnServingsChange(val newServings: String) : ManualRecipeCreationAction
-    data class OnDifficultyChange(val newDifficulty: RecipeDifficulty) : ManualRecipeCreationAction
+    data class OnDifficultyChange(val newDifficulty: Int) : ManualRecipeCreationAction
     data class OnSourceUrlChange(val newSourceUrl: String) : ManualRecipeCreationAction
 
     // Ingredients Sections Actions
@@ -46,6 +48,9 @@ sealed interface ManualRecipeCreationAction {
         val unit: String,
         val note: String
     ) : ManualRecipeCreationAction
+
+    data class OnRemoveIngredient(val ingredientId: String, val sectionId: String? = null) :
+        ManualRecipeCreationAction
 
     // Instruction Actions
     data class OnCreateOrEditInstruction(

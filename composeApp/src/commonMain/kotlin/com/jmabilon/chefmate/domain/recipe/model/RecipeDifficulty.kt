@@ -11,8 +11,11 @@ enum class RecipeDifficulty {
          * Convert an integer value from Supabase to a [RecipeDifficulty].
          * Supabase uses 1 for Easy, 2 for Medium, and 3 for Hard.
          */
-        fun fromValue(value: Int?): RecipeDifficulty? =
+        fun fromDtoValue(value: Int?): RecipeDifficulty? =
             entries.find { it.ordinal + 1 == value }
+
+        fun fromUiValue(value: Int?): RecipeDifficulty? =
+            entries.find { it.ordinal == value }
 
         /**
          * Convert the [RecipeDifficulty] to an integer value for Supabase communication.

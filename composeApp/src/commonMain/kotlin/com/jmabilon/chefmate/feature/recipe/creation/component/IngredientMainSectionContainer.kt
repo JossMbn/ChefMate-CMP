@@ -17,14 +17,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jmabilon.chefmate.designsystem.component.button.AddTextButton
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
-import com.jmabilon.chefmate.feature.recipe.creation.model.RecipeIngredientUiData
+import com.jmabilon.chefmate.feature.recipe.creation.model.recipe.RecipeCreationIngredientUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun IngredientMainSectionContainer(
     modifier: Modifier = Modifier,
-    mainIngredients: ImmutableList<RecipeIngredientUiData>,
+    mainIngredients: ImmutableList<RecipeCreationIngredientUiModel>,
     onAddSectionClick: () -> Unit,
     onEditIngredientClick: (ingredientId: String) -> Unit,
     onAddMainIngredientClick: () -> Unit,
@@ -77,14 +77,14 @@ private fun IngredientMainSectionContainerPreview() {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(10.dp),
             mainIngredients = listOf(
-                RecipeIngredientUiData(
+                RecipeCreationIngredientUiModel(
                     id = "1",
                     name = "Flour",
                     quantity = "2",
                     unit = "cups",
                     orderIndex = 0
                 ),
-                RecipeIngredientUiData(
+                RecipeCreationIngredientUiModel(
                     id = "2",
                     name = "Sugar",
                     quantity = "1",

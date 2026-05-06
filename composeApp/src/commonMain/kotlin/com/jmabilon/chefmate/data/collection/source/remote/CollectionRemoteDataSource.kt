@@ -23,7 +23,9 @@ interface CollectionRemoteDataSource {
 
     suspend fun deleteCollection(collectionId: String): Result<Unit>
 
-    suspend fun updateCollection(collectionId: String, newName: String): Result<CollectionDomain>
+    suspend fun renameCollection(collectionId: String, newName: String): Result<Unit>
 
     suspend fun moveRecipeToCollections(recipeId: String, collectionIds: List<String>): Result<Unit>
+
+    suspend fun toggleRecipeToFavoriteCollection(recipeId: String): Result<Boolean>
 }

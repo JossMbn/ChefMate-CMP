@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.jmabilon.chefmate.core.presentation.SnackbarController
 import com.jmabilon.chefmate.designsystem.component.LoadingContentState
+import com.jmabilon.chefmate.domain.recipe.repository.RecipeRepository
 import com.jmabilon.chefmate.domain.recipe.usecase.ObserveRecipeDetailsUseCase
 import com.jmabilon.chefmate.feature.recipe.details.mapper.toRecipeDetailsUiModel
 import com.jmabilon.chefmate.feature.recipe.details.model.RecipeDetailsAction
@@ -26,7 +28,8 @@ import kotlinx.coroutines.launch
 
 class RecipeDetailsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val observeRecipeDetailsUseCase: ObserveRecipeDetailsUseCase
+    private val observeRecipeDetailsUseCase: ObserveRecipeDetailsUseCase,
+    private val recipeRepository: RecipeRepository
 ) : ViewModel() {
 
     // =============================================================================================
@@ -66,6 +69,7 @@ class RecipeDetailsViewModel(
     fun onAction(action: RecipeDetailsAction) {
         when (action) {
             is RecipeDetailsAction.OnServingsChanged -> onServingChange(action = action.action)
+            RecipeDetailsAction.OnDeleteRecipeClick -> deleteRecipe()
         }
     }
 
@@ -136,5 +140,17 @@ class RecipeDetailsViewModel(
             servings = newServings,
             groups = newGroups
         )
+    }
+
+    private fun deleteRecipe() {
+        viewModelScope.launch {
+            recipeRepository.deleteRecipe(recipeId = args.recipeId)
+                .onSuccess {
+                    _event.send(RecipeDetailsEvent.RecipeSuccessfullyDeleted)
+                }
+                .onFailure { error ->
+                    SnackbarController.sendError(error = error)
+                }
+        }
     }
 }

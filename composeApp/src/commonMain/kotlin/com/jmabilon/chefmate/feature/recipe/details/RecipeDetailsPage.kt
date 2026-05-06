@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,10 +41,15 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chefmate.composeapp.generated.resources.Res
-import chefmate.composeapp.generated.resources.ic_add_rounded_fill
+import chefmate.composeapp.generated.resources.delete
+import chefmate.composeapp.generated.resources.ic_edit_rounded_outlined
+import chefmate.composeapp.generated.resources.ic_more_vert_rounded_fill
+import com.jmabilon.chefmate.core.presentation.ObserveAsEvent
 import com.jmabilon.chefmate.designsystem.component.LoadingContentState
 import com.jmabilon.chefmate.designsystem.component.appbar.CMTopAppBar
 import com.jmabilon.chefmate.designsystem.component.appbar.TopAppBarBackIcon
+import com.jmabilon.chefmate.designsystem.component.button.DropdownMenuItemView
+import com.jmabilon.chefmate.designsystem.component.button.MoreOptionsMenuButton
 import com.jmabilon.chefmate.designsystem.component.recipe.RecipeImageWithPlaceHolder
 import com.jmabilon.chefmate.designsystem.extension.negativePadding
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
@@ -53,10 +59,12 @@ import com.jmabilon.chefmate.feature.recipe.details.component.RecipeIngredientSu
 import com.jmabilon.chefmate.feature.recipe.details.component.RecipeInstructionContainer
 import com.jmabilon.chefmate.feature.recipe.details.mock.RecipeDetailsPageMockProvider
 import com.jmabilon.chefmate.feature.recipe.details.model.RecipeDetailsAction
+import com.jmabilon.chefmate.feature.recipe.details.model.RecipeDetailsEvent
 import com.jmabilon.chefmate.feature.recipe.details.model.RecipeDetailsState
 import com.jmabilon.chefmate.feature.recipe.details.navigation.RecipeDetailsNavigator
 import com.jmabilon.chefmate.feature.recipe.details.navigation.RecipeDetailsNavigatorImpl
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -65,6 +73,12 @@ fun RecipeDetailsRoot(
     navigator: RecipeDetailsNavigator
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvent(viewModel.event) { event ->
+        when (event) {
+            RecipeDetailsEvent.RecipeSuccessfullyDeleted -> navigator.navigateBack()
+        }
+    }
 
     RecipeDetailsPage(
         state = state,
@@ -98,17 +112,43 @@ private fun RecipeDetailsPage(
                 },
                 actions = {
                     IconButton(
-                        onClick = {
-                            navigator.navigateToCollectionSelection(
-                                recipeId = state.recipeDetails.id
-                            )
-                        }
+                        onClick = { navigator.navigateToRecipeEdition(recipeId = state.recipeDetails.id) }
                     ) {
                         Icon(
-                            painter = painterResource(Res.drawable.ic_add_rounded_fill),
+                            painter = painterResource(Res.drawable.ic_edit_rounded_outlined),
                             contentDescription = null
                         )
                     }
+
+                    MoreOptionsMenuButton(
+                        painter = painterResource(Res.drawable.ic_more_vert_rounded_fill),
+                        contentDescription = null,
+                        options = { hideMenu ->
+                            DropdownMenuItemView(
+                                menuTitle = "Edit collections",
+                                colors = MenuDefaults.itemColors(
+                                    textColor = MaterialTheme.colorScheme.onSurface
+                                ),
+                                onClick = {
+                                    navigator.navigateToCollectionSelection(
+                                        recipeId = state.recipeDetails.id
+                                    )
+                                    hideMenu()
+                                }
+                            )
+
+                            DropdownMenuItemView(
+                                menuTitle = stringResource(Res.string.delete),
+                                colors = MenuDefaults.itemColors(
+                                    textColor = MaterialTheme.colorScheme.error
+                                ),
+                                onClick = {
+                                    onAction(RecipeDetailsAction.OnDeleteRecipeClick)
+                                    hideMenu()
+                                }
+                            )
+                        }
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = topAppBarContainerColor,
@@ -192,7 +232,8 @@ private fun RecipeDetailsPageContent(
         item {
             RecipeImageWithPlaceHolder(
                 modifier = Modifier
-                    .negativePadding(horizontal = 16.dp)
+                    .negativePadding(horizontal = 16.dp),
+                imageModifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
                 imageUrl = state.recipeDetails.imageUrl

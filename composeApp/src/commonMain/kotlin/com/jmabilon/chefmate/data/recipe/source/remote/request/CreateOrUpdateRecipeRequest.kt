@@ -7,7 +7,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateRecipeRequest(
+data class CreateOrUpdateRecipeRequest(
     val title: String,
     @SerialName("image_url")
     val imageUrl: String? = null,
@@ -27,10 +27,10 @@ data class CreateRecipeRequest(
 // Request Mapper
 // =================================================================================================
 
-class CreateRecipeRequestMapper : Mapper<CreateRecipeRequest, RecipeDomain> {
+class CreateRecipeRequestMapper : Mapper<CreateOrUpdateRecipeRequest, RecipeDomain> {
 
-    override fun convert(input: RecipeDomain): CreateRecipeRequest {
-        return CreateRecipeRequest(
+    override fun convert(input: RecipeDomain): CreateOrUpdateRecipeRequest {
+        return CreateOrUpdateRecipeRequest(
             title = input.title,
             imageUrl = input.imageUrl,
             prepTimeSeconds = input.prepTime,
@@ -48,6 +48,6 @@ class CreateRecipeRequestMapper : Mapper<CreateRecipeRequest, RecipeDomain> {
 // Request Mapper Extensions
 // =================================================================================================
 
-fun RecipeDomain.toRequest(): CreateRecipeRequest {
+fun RecipeDomain.toRequest(): CreateOrUpdateRecipeRequest {
     return CreateRecipeRequestMapper().convert(this)
 }

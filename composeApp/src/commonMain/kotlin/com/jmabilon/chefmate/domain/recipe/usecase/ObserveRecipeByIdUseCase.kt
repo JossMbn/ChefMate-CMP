@@ -4,13 +4,13 @@ import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
 import com.jmabilon.chefmate.domain.recipe.repository.RecipeRepository
 import kotlinx.coroutines.flow.Flow
 
-interface ObserveRecipeById {
-        operator fun invoke(recipeId: String): Flow<RecipeDomain>
+interface ObserveRecipeByIdUseCase {
+    operator fun invoke(recipeId: String): Flow<RecipeDomain>
 }
 
-class ObserveRecipeByIdImpl(
+class ObserveRecipeByIdUseCaseImpl(
     private val recipeRepository: RecipeRepository
-) : ObserveRecipeById {
+) : ObserveRecipeByIdUseCase {
 
     override fun invoke(recipeId: String): Flow<RecipeDomain> {
         return recipeRepository.observeRecipeById(recipeId = recipeId)

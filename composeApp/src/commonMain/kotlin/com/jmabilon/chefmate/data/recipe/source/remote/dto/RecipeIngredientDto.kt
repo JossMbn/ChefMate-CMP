@@ -29,7 +29,7 @@ class RecipeIngredientMapper : Mapper<RecipeIngredientDomain, RecipeIngredientDt
             name = input.name,
             quantity = input.quantity,
             unit = input.unit,
-            preparationNotes = input.preparationNotes,
+            note = input.preparationNotes,
             sortOrder = input.sortOrder
         )
     }

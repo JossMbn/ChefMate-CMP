@@ -41,7 +41,7 @@ class HomeNavigatorImpl(
     }
 
     override fun navigateToCreateRecipePage() {
-        controller?.navigate(ManualRecipeCreationRoute)
+        controller?.navigate(ManualRecipeCreationRoute())
     }
 
     override fun navigateToAccountPage() {

@@ -5,6 +5,7 @@
     <string name="already_have_account">Already have an account?</string>
     <string name="sign_in">Sign In</string>
     <string name="delete">Delete</string>
+    <string name="rename">Rename</string>
 
     <!-- WelcomePage -->
     <string name="welcome_page_title">Your AI Culinary Companion</string>
