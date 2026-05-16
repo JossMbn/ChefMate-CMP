@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jmabilon.chefmate.designsystem.component.sheet.BottomSheetFooterButtons
 import com.jmabilon.chefmate.designsystem.component.textfield.CMTextField
+import com.jmabilon.chefmate.designsystem.extension.negativePadding
 import com.jmabilon.chefmate.designsystem.sheet.BottomSheetContainer
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 
@@ -32,7 +34,8 @@ fun CreateOrEditIngredientSectionNameBottomSheet(
     sectionId: String?,
     sectionName: String?,
     onDismissRequest: () -> Unit,
-    onConfirmClick: (sectionId: String?, newSectionName: String) -> Unit
+    onConfirmClick: (sectionId: String?, newSectionName: String) -> Unit,
+    onDeleteSectionClick: (sectionId: String) -> Unit
 ) {
     BottomSheetContainer(
         modifier = modifier,
@@ -42,7 +45,8 @@ fun CreateOrEditIngredientSectionNameBottomSheet(
             sectionId = sectionId,
             sectionName = sectionName,
             onDismissRequest = dismissRequester,
-            onConfirmClick = onConfirmClick
+            onConfirmClick = onConfirmClick,
+            onDeleteSectionClick = onDeleteSectionClick
         )
     }
 }
@@ -53,7 +57,8 @@ private fun CreateOrEditIngredientSectionNameBottomSheetContent(
     sectionId: String?,
     sectionName: String?,
     onDismissRequest: () -> Unit,
-    onConfirmClick: (sectionId: String?, newSectionName: String) -> Unit
+    onConfirmClick: (sectionId: String?, newSectionName: String) -> Unit,
+    onDeleteSectionClick: (sectionId: String) -> Unit
 ) {
     var editableSectionName by remember(sectionName) { mutableStateOf(sectionName ?: "") }
     val isEditing by remember(sectionName) { mutableStateOf(sectionName != null) }
@@ -109,6 +114,21 @@ private fun CreateOrEditIngredientSectionNameBottomSheetContent(
             )
         )
 
+        sectionId?.let { id ->
+            TextButton(
+                modifier = Modifier.negativePadding(vertical = 20.dp),
+                onClick = {
+                    onDeleteSectionClick(id)
+                    onDismissRequest()
+                }
+            ) {
+                Text(
+                    text = "Delete section",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+
         BottomSheetFooterButtons(
             modifier = Modifier.fillMaxWidth(),
             primaryButtonLabel = "Confirm",
@@ -131,7 +151,8 @@ private fun CreateOrEditIngredientSectionNameBottomSheetContentPreview() {
             sectionId = null,
             sectionName = null,
             onDismissRequest = { /* no-op */ },
-            onConfirmClick = { _, _ -> /* no-op */ }
+            onConfirmClick = { _, _ -> /* no-op */ },
+            onDeleteSectionClick = { /* no-op */ }
         )
     }
 }

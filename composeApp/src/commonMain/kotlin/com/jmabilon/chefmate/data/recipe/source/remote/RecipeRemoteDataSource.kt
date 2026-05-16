@@ -17,7 +17,11 @@ interface RecipeRemoteDataSource {
 
     suspend fun deleteRecipe(recipeId: String): Result<Unit>
 
-    suspend fun updateRecipe(recipeId: String, recipe: RecipeDomain): Result<RecipeDomain>
+    suspend fun updateRecipe(
+        recipeId: String,
+        recipe: RecipeDomain,
+        collectionIds: List<String>
+    ): Result<RecipeDomain>
 
     // =============================================================================================
     // Images

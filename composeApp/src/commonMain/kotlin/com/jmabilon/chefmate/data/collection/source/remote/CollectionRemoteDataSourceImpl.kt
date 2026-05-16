@@ -92,10 +92,10 @@ class CollectionRemoteDataSourceImpl(
         }
     }
 
-    override suspend fun updateCollection(
+    override suspend fun renameCollection(
         collectionId: String,
         newName: String
-    ): Result<CollectionDomain> {
+    ): Result<Unit> {
         val parameters = UpdateCollectionParameter(collectionName = newName)
 
         return supabaseClient.safeExecution {
@@ -105,7 +105,6 @@ class CollectionRemoteDataSourceImpl(
                         eq(column = CollectionTableColumn.Id.columnName, value = collectionId)
                     }
                 }
-                .decodeAndMap(mapper = CollectionMapper())
         }
     }
 
@@ -128,5 +127,17 @@ class CollectionRemoteDataSourceImpl(
                 print("Error moving recipe to collections: ${error.message}")
             }
             .mapCatching { /* no-op */ }
+    }
+
+    override suspend fun toggleRecipeToFavoriteCollection(recipeId: String): Result<Boolean> {
+        val parameters = mapOf("p_recipe_id" to recipeId)
+
+        return supabaseClient.safeExecution {
+            postgrest.rpc(
+                function = CollectionRpcFunction.ToggleRecipeToFavoriteCollection.functionName,
+                parameters = parameters
+            )
+                .decodeAs<Boolean>()
+        }
     }
 }

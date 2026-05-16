@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chefmate.composeapp.generated.resources.Res
 import chefmate.composeapp.generated.resources.delete
 import chefmate.composeapp.generated.resources.ic_more_vert_rounded_fill
+import chefmate.composeapp.generated.resources.rename
 import com.jmabilon.chefmate.core.presentation.ObserveAsEvent
 import com.jmabilon.chefmate.core.presentation.extension.plus
 import com.jmabilon.chefmate.designsystem.component.LoadingContentState
@@ -33,10 +34,12 @@ import com.jmabilon.chefmate.designsystem.component.recipe.model.RecipeCardUiMod
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
 import com.jmabilon.chefmate.designsystem.utils.UiText
 import com.jmabilon.chefmate.feature.collection.details.model.CollectionDetailsAction
+import com.jmabilon.chefmate.feature.collection.details.model.CollectionDetailsDialogState
 import com.jmabilon.chefmate.feature.collection.details.model.CollectionDetailsEvent
 import com.jmabilon.chefmate.feature.collection.details.model.CollectionDetailsState
 import com.jmabilon.chefmate.feature.collection.details.navigation.CollectionDetailsNavigator
 import com.jmabilon.chefmate.feature.collection.details.navigation.CollectionDetailsNavigatorImpl
+import com.jmabilon.chefmate.feature.collection.details.sheet.rename.RenameCollectionBottomSheet
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -87,13 +90,27 @@ private fun CollectionDetailsPage(
                         MoreOptionsMenuButton(
                             painter = painterResource(Res.drawable.ic_more_vert_rounded_fill),
                             contentDescription = null,
-                            options = {
+                            options = { hideMenu ->
+                                DropdownMenuItemView(
+                                    menuTitle = stringResource(Res.string.rename),
+                                    colors = MenuDefaults.itemColors(
+                                        textColor = MaterialTheme.colorScheme.onSurface
+                                    ),
+                                    onClick = {
+                                        onAction(CollectionDetailsAction.OnRenameCollectionClick)
+                                        hideMenu()
+                                    }
+                                )
+
                                 DropdownMenuItemView(
                                     menuTitle = stringResource(Res.string.delete),
                                     colors = MenuDefaults.itemColors(
                                         textColor = MaterialTheme.colorScheme.error
                                     ),
-                                    onClick = { onAction(CollectionDetailsAction.OnDeleteCollectionClick) }
+                                    onClick = {
+                                        onAction(CollectionDetailsAction.OnDeleteCollectionClick)
+                                        hideMenu()
+                                    }
                                 )
                             }
                         )
@@ -108,6 +125,17 @@ private fun CollectionDetailsPage(
             onAction = onAction,
             navigator = navigator
         )
+    }
+
+    state.dialogState?.let { dialogState ->
+        when (dialogState) {
+            is CollectionDetailsDialogState.RenameCollection -> {
+                RenameCollectionBottomSheet(
+                    collectionId = dialogState.collectionId,
+                    onDismissRequest = { onAction(CollectionDetailsAction.OnDialogDismiss) }
+                )
+            }
+        }
     }
 }
 
@@ -137,6 +165,8 @@ private fun CollectionDetailsPageContent(
                 name = recipe.name,
                 imageUrl = recipe.imageUrl,
                 prepTimeMinute = recipe.prepTimeMinute,
+                isFavorite = recipe.isFavorite,
+                onFavoriteClick = { onAction(CollectionDetailsAction.OnFavoriteRecipeClick(recipeId = recipe.id)) },
                 onClick = { navigator.navigateToRecipeDetails(recipeId = recipe.id) }
             )
         }
@@ -156,25 +186,29 @@ private fun CollectionDetailsPagePreview() {
                         id = "1",
                         name = "Spaghetti Bolognese",
                         imageUrl = "https://example.com/spaghetti.jpg",
-                        prepTimeMinute = UiText.DynamicString("30 mins")
+                        prepTimeMinute = UiText.DynamicString("30 mins"),
+                        isFavorite = false
                     ),
                     RecipeCardUiModel(
                         id = "2",
                         name = "Chicken Curry",
                         imageUrl = "https://example.com/chicken_curry.jpg",
-                        prepTimeMinute = UiText.DynamicString("45 mins")
+                        prepTimeMinute = UiText.DynamicString("45 mins"),
+                        isFavorite = false
                     ),
                     RecipeCardUiModel(
                         id = "3",
                         name = "Vegetable Stir Fry",
                         imageUrl = "https://example.com/vegetable_stir_fry.jpg",
-                        prepTimeMinute = UiText.Empty
+                        prepTimeMinute = UiText.Empty,
+                        isFavorite = true
                     ),
                     RecipeCardUiModel(
                         id = "4",
                         name = "Beef Tacos",
                         imageUrl = "https://example.com/beef_tacos.jpg",
-                        prepTimeMinute = null
+                        prepTimeMinute = null,
+                        isFavorite = false
                     )
                 )
             ),

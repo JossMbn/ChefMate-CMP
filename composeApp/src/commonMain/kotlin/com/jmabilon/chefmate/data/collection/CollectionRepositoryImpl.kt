@@ -2,6 +2,7 @@ package com.jmabilon.chefmate.data.collection
 
 import com.jmabilon.chefmate.data.collection.source.remote.CollectionRemoteDataSource
 import com.jmabilon.chefmate.data.recipe.source.cache.CollectionCacheDataSource
+import com.jmabilon.chefmate.data.recipe.source.cache.RecipeCacheDataSource
 import com.jmabilon.chefmate.domain.collection.repository.CollectionRepository
 import com.jmabilon.chefmate.domain.recipe.model.CollectionDomain
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,7 +13,8 @@ import kotlinx.coroutines.flow.transformLatest
 @OptIn(ExperimentalCoroutinesApi::class)
 class CollectionRepositoryImpl(
     private val collectionRemoteDataSource: CollectionRemoteDataSource,
-    private val collectionCacheDataSource: CollectionCacheDataSource
+    private val collectionCacheDataSource: CollectionCacheDataSource,
+    private val recipeCacheDataSource: RecipeCacheDataSource
 ) : CollectionRepository {
 
     // =============================================================================================
@@ -56,16 +58,19 @@ class CollectionRepositoryImpl(
             }
     }
 
-    override suspend fun updateCollection(
+    override suspend fun renameCollection(
         collectionId: String,
         newName: String
-    ): Result<CollectionDomain> {
-        return collectionRemoteDataSource.updateCollection(
+    ): Result<Unit> {
+        return collectionRemoteDataSource.renameCollection(
             collectionId = collectionId,
             newName = newName
         )
-            .onSuccess { updatedCollection ->
-                collectionCacheDataSource.updateCollection(collection = updatedCollection)
+            .onSuccess {
+                collectionCacheDataSource.renameCollection(
+                    collectionId = collectionId,
+                    collectionName = newName
+                )
             }
     }
 
@@ -77,5 +82,14 @@ class CollectionRepositoryImpl(
             recipeId = recipeId,
             collectionIds = collectionIds
         )
+    }
+
+    override suspend fun toggleRecipeToFavoriteCollection(recipeId: String): Result<Unit> {
+        return collectionRemoteDataSource.toggleRecipeToFavoriteCollection(recipeId = recipeId)
+            .onSuccess {
+                recipeCacheDataSource.invalidate(recipeId = recipeId)
+                collectionCacheDataSource.invalidateAll()
+            }
+            .mapCatching { /* no-op */ }
     }
 }

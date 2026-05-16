@@ -96,6 +96,19 @@ private fun HomePage(
             navigator = navigator
         )
     }
+
+    state.dialogState?.let { dialog ->
+        when (dialog) {
+            HomeDialogState.CreateCollection -> {
+                CreateCollectionBottomSheet(
+                    onDismissRequest = { onAction(HomeAction.OnDismissDialog) },
+                    onCreateCollectionClick = { collectionName ->
+                        onAction(HomeAction.OnCreateCollection(collectionName))
+                    }
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -125,19 +138,6 @@ private fun HomePageContentPage(
                 recipeCount = collection.recipeCount,
                 onClick = { navigator.navigateToCollectionDetailsPage(collectionId = collection.id) }
             )
-        }
-    }
-
-    state.dialogState?.let { dialog ->
-        when (dialog) {
-            HomeDialogState.CreateCollection -> {
-                CreateCollectionBottomSheet(
-                    onDismissRequest = { onAction(HomeAction.OnDismissDialog) },
-                    onCreateCollectionClick = { collectionName ->
-                        onAction(HomeAction.OnCreateCollection(collectionName))
-                    }
-                )
-            }
         }
     }
 }

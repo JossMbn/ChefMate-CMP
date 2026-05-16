@@ -21,13 +21,13 @@ import chefmate.composeapp.generated.resources.Res
 import chefmate.composeapp.generated.resources.ic_sticky_note_rounded_outlined
 import com.jmabilon.chefmate.designsystem.extension.customClickable
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
-import com.jmabilon.chefmate.feature.recipe.creation.model.RecipeIngredientUiData
+import com.jmabilon.chefmate.feature.recipe.creation.model.recipe.RecipeCreationIngredientUiModel
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun IngredientItem(
     modifier: Modifier = Modifier,
-    ingredient: RecipeIngredientUiData,
+    ingredient: RecipeCreationIngredientUiModel,
     onEditClick: () -> Unit
 ) {
     Column(
@@ -50,7 +50,7 @@ fun IngredientItem(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        if (!ingredient.notes.isNullOrEmpty()) {
+        if (!ingredient.note.isNullOrEmpty()) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -63,7 +63,7 @@ fun IngredientItem(
                 )
 
                 Text(
-                    text = ingredient.notes,
+                    text = ingredient.note,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -77,12 +77,12 @@ fun IngredientItem(
 private fun IngredientItemPreview() {
     ChefMateTheme {
         IngredientItem(
-            ingredient = RecipeIngredientUiData(
+            ingredient = RecipeCreationIngredientUiModel(
                 id = "0",
                 name = "Chicken Thighs",
                 quantity = "2",
                 unit = "lbs",
-                notes = "Bone-in, skin-on preffered",
+                note = "Bone-in, skin-on preffered",
                 orderIndex = 0
             ),
             onEditClick = { /* no-op */ }

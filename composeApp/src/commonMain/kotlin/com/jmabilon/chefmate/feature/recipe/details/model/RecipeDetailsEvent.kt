@@ -1,5 +1,5 @@
 package com.jmabilon.chefmate.feature.recipe.details.model
 
 sealed interface RecipeDetailsEvent {
-    // viewModel event
+    data object RecipeSuccessfullyDeleted : RecipeDetailsEvent
 }

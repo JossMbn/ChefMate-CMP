@@ -5,6 +5,7 @@ import com.jmabilon.chefmate.core.data.cache.CacheEngine
 import com.jmabilon.chefmate.domain.recipe.model.CollectionDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlin.time.Duration
 
@@ -41,8 +42,26 @@ class CollectionCacheDataSourceImpl : CollectionCacheDataSource {
     override suspend fun cacheCollections(collections: List<CollectionDomain>) =
         engine.putAll(entries = collections.associateBy { it.id })
 
-    override suspend fun updateCollection(collection: CollectionDomain) =
-        engine.put(key = collection.id, value = collection)
+    override suspend fun renameCollection(collectionId: String, collectionName: String) {
+        val collection = getCollection(collectionId = collectionId).getOrNull() ?: run {
+            invalidateAll()
+            return
+        }
+        val renamedCollection = collection.copy(name = collectionName)
+
+        cacheCollection(collection = renamedCollection)
+    }
+
+    override suspend fun removeRecipesInCollections(recipes: List<String>) {
+        val allCollections = observeCollections().first()
+
+        val updatedCollections = allCollections.map { collection ->
+            val updatedRecipeIds = collection.recipes.filterNot { it.id in recipes }
+            collection.copy(recipes = updatedRecipeIds)
+        }
+
+        cacheCollections(collections = updatedCollections)
+    }
 
     override suspend fun invalidate(collectionId: String) =
         engine.remove(key = collectionId)
@@ -56,18 +75,6 @@ class CollectionCacheDataSourceImpl : CollectionCacheDataSource {
     // =============================================================================================
     // Custom Queries
     // =============================================================================================
-
-    override suspend fun moveRecipeToCollections(
-        recipeId: String,
-        collectionIds: List<String>
-    ): Result<Unit> {
-        // In a real implementation, this would likely involve more complex logic to update the
-        // relevant CollectionDomain entries (e.g. adjusting recipeCount) and ensure cache consistency.
-        // For this example, we'll simply invalidate all collections to force a refresh on next observation.
-        return runCatching {
-            invalidateAll()
-        }
-    }
 
     // =============================================================================================
     // Reactive Observation

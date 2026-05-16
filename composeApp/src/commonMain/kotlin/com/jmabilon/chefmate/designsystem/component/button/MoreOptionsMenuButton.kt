@@ -37,7 +37,7 @@ fun MoreOptionsMenuButton(
     painter: Painter,
     contentDescription: String?,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
-    options: @Composable ColumnScope.() -> Unit
+    options: @Composable ColumnScope.(() -> Unit) -> Unit
 ) {
     var isContextMenuVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -60,7 +60,9 @@ fun MoreOptionsMenuButton(
             shape = RoundedCornerShape(16.dp),
             containerColor = MaterialTheme.colorScheme.surface,
             offset = DpOffset(0.dp, 0.dp),
-            content = options
+            content = {
+                options { isContextMenuVisible = false }
+            }
         )
     }
 }

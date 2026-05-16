@@ -4,6 +4,7 @@ import com.jmabilon.chefmate.feature.account.AccountViewModel
 import com.jmabilon.chefmate.feature.authentication.signin.SignInViewModel
 import com.jmabilon.chefmate.feature.authentication.signup.SignUpViewModel
 import com.jmabilon.chefmate.feature.collection.details.CollectionDetailsViewModel
+import com.jmabilon.chefmate.feature.collection.details.sheet.rename.RenameCollectionViewModel
 import com.jmabilon.chefmate.feature.collection.selection.CollectionSelectionViewModel
 import com.jmabilon.chefmate.feature.entrypoint.ChefMateEntrypointViewModel
 import com.jmabilon.chefmate.feature.home.HomeViewModel
@@ -52,4 +53,5 @@ val viewModelModule = module {
 
     viewModelOf(::CollectionDetailsViewModel)
     viewModelOf(::CollectionSelectionViewModel)
+    viewModelOf(::RenameCollectionViewModel)
 }

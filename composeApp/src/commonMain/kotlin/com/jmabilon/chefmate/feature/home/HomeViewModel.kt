@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jmabilon.chefmate.domain.collection.usecase.CreateCollectionUseCase
 import com.jmabilon.chefmate.domain.collection.usecase.ObserveCollectionsUseCase
+import com.jmabilon.chefmate.domain.recipe.model.CollectionDomain
+import com.jmabilon.chefmate.domain.recipe.model.CollectionSystemType
 import com.jmabilon.chefmate.feature.home.mapper.toUiData
 import com.jmabilon.chefmate.feature.home.model.HomeAction
 import com.jmabilon.chefmate.feature.home.model.HomeDialogState
@@ -30,16 +32,25 @@ class HomeViewModel(
 
     private val _event = Channel<HomeEvent>()
 
+    private val _collections = observeCollectionsUseCase()
+        .map { collections ->
+            collections
+                // Uncategorized and Favorites collections should always be at the top of the list, sorted by updatedAt desc
+                .sortedWith(
+                    compareByDescending<CollectionDomain> { it.systemType == CollectionSystemType.Uncategorized }
+                        .thenByDescending { it.systemType == CollectionSystemType.Favorites }
+                        .thenByDescending { it.updatedAt }
+                )
+                .toUiData()
+        }
+
+    private val _dialogState = MutableStateFlow<HomeDialogState?>(null)
+
     // =============================================================================================
     // Public Properties
     // =============================================================================================
 
     val event = _event.receiveAsFlow()
-
-    private val _collections = observeCollectionsUseCase()
-        .map { collections -> collections.toUiData() }
-
-    private val _dialogState = MutableStateFlow<HomeDialogState?>(null)
 
     val state = _collections.combine(_dialogState) { collections, dialogState ->
         HomeState(

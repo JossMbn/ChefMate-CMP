@@ -27,7 +27,7 @@ class CreateIngredientRequestMapper : Mapper<CreateIngredientRequest, RecipeIngr
             name = input.name,
             quantity = input.quantity,
             unit = input.unit,
-            preparationNotes = input.preparationNotes,
+            preparationNotes = input.note,
             sortOrder = input.sortOrder
         )
     }

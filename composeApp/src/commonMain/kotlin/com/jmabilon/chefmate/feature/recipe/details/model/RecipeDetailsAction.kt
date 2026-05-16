@@ -5,4 +5,6 @@ import com.jmabilon.chefmate.feature.recipe.details.model.recipe.RecipeServingAc
 sealed interface RecipeDetailsAction {
 
     data class OnServingsChanged(val action: RecipeServingActionUiModel) : RecipeDetailsAction
+
+    data object OnDeleteRecipeClick : RecipeDetailsAction
 }

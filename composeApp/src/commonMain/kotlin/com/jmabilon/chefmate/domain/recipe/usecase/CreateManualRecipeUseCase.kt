@@ -8,7 +8,7 @@ interface CreateManualRecipeUseCase {
     suspend operator fun invoke(recipe: RecipeDomain): Result<RecipeDomain>
 }
 
-class CreateManualRecipeUseCaseImpl(
+class CreateRecipeUseCaseImpl(
     private val recipeRepository: RecipeRepository,
     private val collectionRepository: CollectionRepository
 ) : CreateManualRecipeUseCase {

@@ -2,7 +2,6 @@ package com.jmabilon.chefmate.data.recipe.source.remote.request
 
 import com.jmabilon.chefmate.core.domain.Mapper
 import com.jmabilon.chefmate.domain.recipe.model.RecipeInstructionDomain
-import com.jmabilon.chefmate.domain.recipe.model.TemperatureUnit
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -30,9 +29,9 @@ class CreateInstructionRequestMapper : Mapper<CreateInstructionRequest, RecipeIn
         return CreateInstructionRequest(
             title = input.title,
             instructions = input.instructions,
-            cookDurationSeconds = input.cookDuration,
-            temperatureValue = input.temperature?.value,
-            temperatureUnit = TemperatureUnit.toValue(input.temperature?.unit),
+            cookDurationSeconds = null,
+            temperatureValue = null,
+            temperatureUnit = null,
             sortOrder = input.sortOrder
         )
     }

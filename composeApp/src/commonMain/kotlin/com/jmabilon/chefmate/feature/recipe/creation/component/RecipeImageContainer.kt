@@ -26,22 +26,21 @@ import androidx.compose.ui.unit.dp
 import chefmate.composeapp.generated.resources.Res
 import chefmate.composeapp.generated.resources.ic_add_a_photo_rounded_outlined
 import chefmate.composeapp.generated.resources.ic_delete_forever_rounded_outlined
+import coil3.compose.AsyncImage
 import com.jmabilon.chefmate.designsystem.extension.customClickable
 import com.jmabilon.chefmate.designsystem.extension.dashedBorder
 import com.jmabilon.chefmate.designsystem.provider.toComposeImageBitmap
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
-import kotlinx.collections.immutable.ImmutableList
+import com.jmabilon.chefmate.feature.recipe.creation.model.recipe.ImageSource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun RecipeImageContainer(
     modifier: Modifier = Modifier,
-    image: ImmutableList<Byte>?,
+    imageSource: ImageSource?,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    val bitmap = remember(image) { image?.toComposeImageBitmap() }
-
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -50,14 +49,32 @@ fun RecipeImageContainer(
             .customClickable(onClick = onEditClick),
         contentAlignment = Alignment.Center
     ) {
-        if (!image.isNullOrEmpty() && bitmap != null) {
-            Image(
-                modifier = Modifier
-                    .matchParentSize(),
-                bitmap = bitmap,
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+        if (imageSource != null) {
+            when (imageSource) {
+                is ImageSource.ByteArray -> {
+                    val imageImageBitmap = remember(imageSource.bytes) {
+                        imageSource.bytes.toComposeImageBitmap()
+                    }
+
+                    Image(
+                        modifier = Modifier
+                            .matchParentSize(),
+                        bitmap = imageImageBitmap,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                is ImageSource.Url -> {
+                    AsyncImage(
+                        modifier = Modifier
+                            .matchParentSize(),
+                        model = imageSource.url,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
 
             IconButton(
                 modifier = Modifier
@@ -122,7 +139,7 @@ private fun RecipeImageContainerPreview() {
     ChefMateTheme {
         RecipeImageContainer(
             modifier = Modifier.padding(10.dp),
-            image = null,
+            imageSource = null,
             onEditClick = { /* no-op */ },
             onDeleteClick = { /* no-op */ }
         )

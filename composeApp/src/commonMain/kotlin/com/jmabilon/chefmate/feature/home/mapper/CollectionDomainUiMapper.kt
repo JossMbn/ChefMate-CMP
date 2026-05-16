@@ -9,7 +9,9 @@ import kotlinx.collections.immutable.toImmutableList
 class CollectionDomainUiMapper : Mapper<CollectionUiData, CollectionDomain> {
 
     override fun convert(input: CollectionDomain): CollectionUiData {
-        val imageUrls = input.recipes.take(3).map { it.imageUrl ?: "" }
+        val imageUrls = input.recipes
+            .take(3)
+            .mapNotNull { it.imageUrl }
 
         return CollectionUiData(
             id = input.id,

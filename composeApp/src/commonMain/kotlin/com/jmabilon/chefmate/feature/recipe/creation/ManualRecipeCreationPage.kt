@@ -61,6 +61,7 @@ import com.jmabilon.chefmate.feature.recipe.creation.model.ManualRecipeCreationA
 import com.jmabilon.chefmate.feature.recipe.creation.model.ManualRecipeCreationAction.OnShowCreateOrEditIngredientSectionNameDialog
 import com.jmabilon.chefmate.feature.recipe.creation.model.ManualRecipeCreationAction.OnShowCreateOrEditMainIngredientDialog
 import com.jmabilon.chefmate.feature.recipe.creation.model.ManualRecipeCreationAction.OnShowCreateOrEditSectionIngredientDialog
+import com.jmabilon.chefmate.feature.recipe.creation.model.ManualRecipeCreationContext
 import com.jmabilon.chefmate.feature.recipe.creation.model.ManualRecipeCreationDialogState
 import com.jmabilon.chefmate.feature.recipe.creation.model.ManualRecipeCreationEvent
 import com.jmabilon.chefmate.feature.recipe.creation.model.ManualRecipeCreationState
@@ -81,7 +82,7 @@ fun ManualRecipeCreationRoot(
 
     ObserveAsEvent(viewModel.event) { event ->
         when (event) {
-            ManualRecipeCreationEvent.RecipeSuccessfullyCreated -> navigator.navigateBack()
+            ManualRecipeCreationEvent.RecipeSuccessfullyCreatedOrUpdated -> navigator.navigateBack()
         }
     }
 
@@ -102,7 +103,7 @@ private fun ManualRecipeCreationPage(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CMTopAppBar(
-                title = "New Recipe",
+                title = if (state.context == ManualRecipeCreationContext.Creation) "New Recipe" else "Edit Recipe",
                 navigationIcon = {
                     TopAppBarBackIcon(onClick = navigator::navigateBack)
                 },
@@ -118,7 +119,7 @@ private fun ManualRecipeCreationPage(
                             )
                         } else {
                             Text(
-                                text = "Create",
+                                text = if (state.context == ManualRecipeCreationContext.Creation) "Create" else "Save",
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
@@ -138,6 +139,131 @@ private fun ManualRecipeCreationPage(
             state = state,
             onAction = onAction
         )
+    }
+
+    state.dialogState?.let { dialogState ->
+        when (dialogState) {
+            is ManualRecipeCreationDialogState.CreateOrEditIngredientSectionName -> {
+                CreateOrEditIngredientSectionNameBottomSheet(
+                    sectionId = dialogState.sectionId,
+                    sectionName = dialogState.sectionName,
+                    onDismissRequest = { onAction(OnDismissDialog) },
+                    onConfirmClick = { sectionId, newSectionName ->
+                        if (sectionId == null) {
+                            onAction(
+                                OnCreateIngredientSection(
+                                    newSectionName = newSectionName
+                                )
+                            )
+                        } else {
+                            onAction(
+                                OnRenameIngredientSectionName(
+                                    sectionId = sectionId,
+                                    newSectionName = newSectionName
+                                )
+                            )
+                        }
+                    },
+                    onDeleteSectionClick = { sectionId ->
+                        onAction(ManualRecipeCreationAction.OnRemoveIngredientSectionClick(sectionId))
+                    }
+                )
+            }
+
+            is ManualRecipeCreationDialogState.CreateOrEditIngredient -> {
+                CreateIngredientBottomSheet(
+                    sectionName = dialogState.sectionName,
+                    ingredient = dialogState.ingredient,
+                    onDismissRequest = { onAction(OnDismissDialog) },
+                    onConfirmClick = { ingredientName, quantity, unit, note ->
+                        if (dialogState.ingredient != null) {
+                            onAction(
+                                OnEditSectionIngredient(
+                                    sectionId = dialogState.sectionId,
+                                    ingredientId = dialogState.ingredient.id,
+                                    name = ingredientName,
+                                    quantity = quantity,
+                                    unit = unit,
+                                    note = note
+                                )
+                            )
+                        } else {
+                            onAction(
+                                OnAddSectionIngredient(
+                                    sectionId = dialogState.sectionId,
+                                    name = ingredientName,
+                                    quantity = quantity,
+                                    unit = unit,
+                                    note = note
+                                )
+                            )
+                        }
+                    },
+                    onDeleteIngredientClick = {
+                        if (dialogState.ingredient == null) return@CreateIngredientBottomSheet
+
+                        onAction(
+                            ManualRecipeCreationAction.OnRemoveIngredient(
+                                ingredientId = dialogState.ingredient.id,
+                                sectionId = dialogState.sectionId
+                            )
+                        )
+                    }
+                )
+            }
+
+            is ManualRecipeCreationDialogState.CreateOrEditMainIngredient -> {
+                CreateIngredientBottomSheet(
+                    ingredient = dialogState.ingredient,
+                    onDismissRequest = { onAction(OnDismissDialog) },
+                    onConfirmClick = { ingredientName, quantity, unit, note ->
+                        onAction(
+                            OnCreateOrEditMainIngredient(
+                                ingredientId = dialogState.ingredient?.id,
+                                name = ingredientName,
+                                quantity = quantity,
+                                unit = unit,
+                                note = note
+                            )
+                        )
+                    },
+                    onDeleteIngredientClick = {
+                        if (dialogState.ingredient == null) return@CreateIngredientBottomSheet
+
+                        onAction(
+                            ManualRecipeCreationAction.OnRemoveIngredient(
+                                ingredientId = dialogState.ingredient.id
+                            )
+                        )
+                    }
+                )
+            }
+
+            is ManualRecipeCreationDialogState.CreateOrEditInstruction -> {
+                CreateInstructionBottomSheet(
+                    instruction = dialogState.instruction,
+                    onDismissRequest = { onAction(OnDismissDialog) },
+                    onConfirmClick = { title, instruction ->
+                        onAction(
+                            ManualRecipeCreationAction.OnCreateOrEditInstruction(
+                                instructionId = dialogState.instruction?.id,
+                                title = title,
+                                instruction = instruction
+                            )
+                        )
+                    },
+                    onDeleteInstructionClick = {
+                        if (dialogState.instruction == null) return@CreateInstructionBottomSheet
+
+                        onAction(
+                            ManualRecipeCreationAction.OnRemoveInstruction(
+                                instructionId = dialogState.instruction.id
+                            )
+                        )
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -162,7 +288,7 @@ private fun ManualRecipeCreationPageContent(
     ) {
         item {
             RecipeImageContainer(
-                image = state.recipe.info.image,
+                imageSource = state.recipe.imageSource,
                 onEditClick = { imagePicker.pickImage() },
                 onDeleteClick = { onAction(ManualRecipeCreationAction.OnImageChange(null)) }
             )
@@ -171,7 +297,7 @@ private fun ManualRecipeCreationPageContent(
         item {
             CMTextField(
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-                value = state.recipe.info.title,
+                value = state.recipe.title,
                 onValueChange = { onAction(ManualRecipeCreationAction.OnTitleChange(it)) },
                 label = "Title",
                 hint = "e.g., Grandma's Apple Pie",
@@ -189,8 +315,8 @@ private fun ManualRecipeCreationPageContent(
             ) {
                 TimeInputField(
                     modifier = Modifier.weight(1f),
-                    hour = state.recipe.info.prepTime?.hour,
-                    minute = state.recipe.info.prepTime?.minute,
+                    hour = state.recipe.prepTime.hour,
+                    minute = state.recipe.prepTime.minute,
                     onValueChange = { hour, minute ->
                         onAction(ManualRecipeCreationAction.OnPrepTimeChange(hour, minute))
                     },
@@ -204,8 +330,8 @@ private fun ManualRecipeCreationPageContent(
 
                 TimeInputField(
                     modifier = Modifier.weight(1f),
-                    hour = state.recipe.info.cookTime?.hour,
-                    minute = state.recipe.info.cookTime?.minute,
+                    hour = state.recipe.cookTime.hour,
+                    minute = state.recipe.cookTime.minute,
                     onValueChange = { hour, minute ->
                         onAction(ManualRecipeCreationAction.OnCookTimeChange(hour, minute))
                     },
@@ -222,7 +348,7 @@ private fun ManualRecipeCreationPageContent(
         item {
             CMTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = state.recipe.info.servings,
+                value = state.recipe.servings,
                 onValueChange = { newValue ->
                     val newServingsValue = newValue
                         .filter { it.isDigit() }
@@ -257,11 +383,11 @@ private fun ManualRecipeCreationPageContent(
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             },
-                            selected = difficulty == state.recipe.info.difficulty,
+                            selected = difficulty.ordinal == state.recipe.difficulty,
                             onClick = {
                                 onAction(
                                     ManualRecipeCreationAction.OnDifficultyChange(
-                                        difficulty
+                                        difficulty.ordinal
                                     )
                                 )
                             }
@@ -274,7 +400,7 @@ private fun ManualRecipeCreationPageContent(
         item {
             CMTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = state.recipe.info.sourceUrl,
+                value = state.recipe.sourceUrl,
                 onValueChange = { onAction(ManualRecipeCreationAction.OnSourceUrlChange(it)) },
                 label = "Source URL",
                 hint = "https://...",
@@ -381,100 +507,6 @@ private fun ManualRecipeCreationPageContent(
                     )
                 }
             )
-        }
-    }
-
-    state.dialogState?.let { dialogState ->
-        when (dialogState) {
-            is ManualRecipeCreationDialogState.CreateOrEditIngredientSectionName -> {
-                CreateOrEditIngredientSectionNameBottomSheet(
-                    sectionId = dialogState.sectionId,
-                    sectionName = dialogState.sectionName,
-                    onDismissRequest = { onAction(OnDismissDialog) },
-                    onConfirmClick = { sectionId, newSectionName ->
-                        if (sectionId == null) {
-                            onAction(
-                                OnCreateIngredientSection(
-                                    newSectionName = newSectionName
-                                )
-                            )
-                        } else {
-                            onAction(
-                                OnRenameIngredientSectionName(
-                                    sectionId = sectionId,
-                                    newSectionName = newSectionName
-                                )
-                            )
-                        }
-                    }
-                )
-            }
-
-            is ManualRecipeCreationDialogState.CreateOrEditIngredient -> {
-                CreateIngredientBottomSheet(
-                    sectionName = dialogState.sectionName,
-                    ingredient = dialogState.ingredient,
-                    onDismissRequest = { onAction(OnDismissDialog) },
-                    onConfirmClick = { ingredientName, quantity, unit, note ->
-                        if (dialogState.ingredient != null) {
-                            onAction(
-                                OnEditSectionIngredient(
-                                    sectionId = dialogState.sectionId,
-                                    ingredientId = dialogState.ingredient.id,
-                                    name = ingredientName,
-                                    quantity = quantity,
-                                    unit = unit,
-                                    note = note
-                                )
-                            )
-                        } else {
-                            onAction(
-                                OnAddSectionIngredient(
-                                    sectionId = dialogState.sectionId,
-                                    name = ingredientName,
-                                    quantity = quantity,
-                                    unit = unit,
-                                    note = note
-                                )
-                            )
-                        }
-                    }
-                )
-            }
-
-            is ManualRecipeCreationDialogState.CreateOrEditMainIngredient -> {
-                CreateIngredientBottomSheet(
-                    ingredient = dialogState.ingredient,
-                    onDismissRequest = { onAction(OnDismissDialog) },
-                    onConfirmClick = { ingredientName, quantity, unit, note ->
-                        onAction(
-                            OnCreateOrEditMainIngredient(
-                                ingredientId = dialogState.ingredient?.id,
-                                name = ingredientName,
-                                quantity = quantity,
-                                unit = unit,
-                                note = note
-                            )
-                        )
-                    }
-                )
-            }
-
-            is ManualRecipeCreationDialogState.CreateOrEditInstruction -> {
-                CreateInstructionBottomSheet(
-                    instruction = dialogState.instruction,
-                    onDismissRequest = { onAction(OnDismissDialog) },
-                    onConfirmClick = { title, instruction ->
-                        onAction(
-                            ManualRecipeCreationAction.OnCreateOrEditInstruction(
-                                instructionId = dialogState.instruction?.id,
-                                title = title,
-                                instruction = instruction
-                            )
-                        )
-                    }
-                )
-            }
         }
     }
 }

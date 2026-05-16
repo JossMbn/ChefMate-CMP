@@ -20,14 +20,14 @@ import chefmate.composeapp.generated.resources.Res
 import chefmate.composeapp.generated.resources.ic_edit_rounded_outlined
 import com.jmabilon.chefmate.designsystem.component.button.AddTextButton
 import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
-import com.jmabilon.chefmate.feature.recipe.creation.model.RecipeIngredientSectionUiData
+import com.jmabilon.chefmate.feature.recipe.creation.model.recipe.RecipeCreationIngredientSectionUiModel
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun IngredientsSectionContainer(
     modifier: Modifier = Modifier,
-    section: RecipeIngredientSectionUiData,
+    section: RecipeCreationIngredientSectionUiModel,
     onEditSection: () -> Unit,
     onAddIngredientClick: () -> Unit,
     onEditIngredientClick: (ingredientId: String) -> Unit
@@ -79,7 +79,7 @@ private fun IngredientsSectionContainerPreview() {
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
                 .padding(10.dp),
-            section = RecipeIngredientSectionUiData(
+            section = RecipeCreationIngredientSectionUiModel(
                 id = "1",
                 name = "Section 1",
                 ingredients = persistentListOf(),

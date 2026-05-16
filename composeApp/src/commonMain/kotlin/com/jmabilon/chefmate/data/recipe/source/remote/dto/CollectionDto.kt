@@ -1,6 +1,7 @@
 package com.jmabilon.chefmate.data.recipe.source.remote.dto
 
 import com.jmabilon.chefmate.core.domain.Mapper
+import com.jmabilon.chefmate.core.domain.extension.toLocalDateTime
 import com.jmabilon.chefmate.domain.recipe.model.CollectionDomain
 import com.jmabilon.chefmate.domain.recipe.model.CollectionSystemType
 import kotlinx.serialization.SerialName
@@ -32,8 +33,8 @@ class CollectionMapper : Mapper<CollectionDomain, CollectionDto> {
             id = input.id,
             name = input.name,
             systemType = CollectionSystemType.fromValue(input.systemType),
-            createdAt = input.createdAt,
-            updatedAt = input.updatedAt,
+            createdAt = input.createdAt.toLocalDateTime(),
+            updatedAt = input.updatedAt.toLocalDateTime(),
             recipeCount = input.recipeCount,
             recipes = input.recipes.toDomain()
         )

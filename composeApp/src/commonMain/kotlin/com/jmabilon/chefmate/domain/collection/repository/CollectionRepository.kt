@@ -25,11 +25,13 @@ interface CollectionRepository {
 
     suspend fun deleteCollection(collectionId: String): Result<Unit>
 
-    suspend fun updateCollection(collectionId: String, newName: String): Result<CollectionDomain>
+    suspend fun renameCollection(collectionId: String, newName: String): Result<Unit>
 
     /**
      * Moves a recipe to the given set of collections (replaces previous membership).
      * Invalidates both recipe and collection caches for cross-screen reactivity.
      */
     suspend fun updateRecipeCollections(recipeId: String, collectionIds: List<String>): Result<Unit>
+
+    suspend fun toggleRecipeToFavoriteCollection(recipeId: String): Result<Unit>
 }

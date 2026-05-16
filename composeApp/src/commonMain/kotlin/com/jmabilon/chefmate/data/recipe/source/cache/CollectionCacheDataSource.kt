@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
  *
  * Exposes reactive [Flow]-based observation over the cached collection list.
  * When a recipe's collection membership changes, the repository is responsible for
- * calling [updateCollection] so that the affected [CollectionDomain] entries
+ * calling [renameCollection] so that the affected [CollectionDomain] entries
  * (e.g. updated [CollectionDomain.recipeCount]) are reflected here.
  *
  * On [CacheError], callers are expected to fall back to the remote data source.
@@ -41,10 +41,15 @@ interface CollectionCacheDataSource {
     suspend fun cacheCollections(collections: List<CollectionDomain>)
 
     /**
-     * Updates an existing cache entry for [collection]. Semantically identical to [cacheCollection]
+     * Updates an existing cache entry for [collectionName]. Semantically identical to [cacheCollection]
      * but signals intent of mutation rather than initial population.
      */
-    suspend fun updateCollection(collection: CollectionDomain)
+    suspend fun renameCollection(collectionId: String, collectionName: String)
+
+    /**
+     * Removes all cache entries that contain any of the [recipes].
+     */
+    suspend fun removeRecipesInCollections(recipes: List<String>)
 
     /**
      * Removes the cache entry for [collectionId].
@@ -64,8 +69,6 @@ interface CollectionCacheDataSource {
     // =============================================================================================
     // Custom Queries
     // =============================================================================================
-
-    suspend fun moveRecipeToCollections(recipeId: String, collectionIds: List<String>): Result<Unit>
 
     // =============================================================================================
     // Reactive Observation
