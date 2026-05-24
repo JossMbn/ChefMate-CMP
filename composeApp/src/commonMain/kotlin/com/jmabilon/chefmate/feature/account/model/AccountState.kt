@@ -1,9 +1,0 @@
-package com.jmabilon.chefmate.feature.account.model
-
-enum class AccountContentView {
-    Loading, Content
-}
-
-data class AccountState(
-    val contentView: AccountContentView = AccountContentView.Loading
-)

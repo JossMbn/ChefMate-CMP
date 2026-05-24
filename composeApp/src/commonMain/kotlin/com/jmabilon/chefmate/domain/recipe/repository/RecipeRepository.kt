@@ -15,17 +15,11 @@ interface RecipeRepository {
     // CRUD
     // =============================================================================================
 
-    suspend fun getRecipeById(recipeId: String): Result<RecipeDomain>
-
     suspend fun createRecipe(recipe: RecipeDomain, collectionIds: List<String>): Result<RecipeDomain>
 
     suspend fun deleteRecipe(recipeId: String): Result<Unit>
 
-    suspend fun updateRecipe(
-        recipeId: String,
-        recipe: RecipeDomain,
-        collectionIds: List<String>
-    ): Result<RecipeDomain>
+    suspend fun updateRecipe(recipe: RecipeDomain): Result<RecipeDomain>
 
     // =============================================================================================
     // Images
@@ -36,4 +30,6 @@ interface RecipeRepository {
     suspend fun uploadRecipeImage(recipeId: String, imageData: ByteArray, extension: String): Result<String>
 
     suspend fun deleteRecipeImage(imagePath: String): Result<Unit>
+
+    suspend fun scanRecipeFromImage(imageData: List<Byte>): Result<RecipeDomain>
 }

@@ -4,7 +4,7 @@ import chefmate.composeapp.generated.resources.Res
 import chefmate.composeapp.generated.resources.time_format_hours_minutes
 import chefmate.composeapp.generated.resources.time_format_hours_only
 import chefmate.composeapp.generated.resources.time_format_minutes_only
-import com.jmabilon.chefmate.designsystem.utils.UiText
+import com.jmabilon.chefmate.core.presentation.UiText
 
 /**
  * Converts an integer representing seconds into a pair of hours and minutes.

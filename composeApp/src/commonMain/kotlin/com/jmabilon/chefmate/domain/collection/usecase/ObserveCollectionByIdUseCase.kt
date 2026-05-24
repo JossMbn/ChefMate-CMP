@@ -3,8 +3,7 @@ package com.jmabilon.chefmate.domain.collection.usecase
 import com.jmabilon.chefmate.domain.collection.repository.CollectionRepository
 import com.jmabilon.chefmate.domain.recipe.model.CollectionDomain
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 interface ObserveCollectionByIdUseCase {
     operator fun invoke(collectionId: String): Flow<CollectionDomain>
@@ -16,8 +15,7 @@ class ObserveCollectionByIdUseCaseImpl(
 
     override fun invoke(collectionId: String): Flow<CollectionDomain> =
         collectionRepository.observeCollections()
-            .map { collections ->
+            .mapNotNull { collections ->
                 collections.find { it.id == collectionId }
             }
-            .filterNotNull()
 }

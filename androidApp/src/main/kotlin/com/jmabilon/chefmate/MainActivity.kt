@@ -9,9 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jmabilon.chefmate.domain.authentication.model.AuthenticationStatus
-import com.jmabilon.chefmate.feature.entrypoint.ChefMateEntrypoint
-import com.jmabilon.chefmate.feature.entrypoint.ChefMateEntrypointViewModel
+import com.jmabilon.chefmate.feature.entrypoint.domain.model.AuthenticationStatus
+import com.jmabilon.chefmate.feature.entrypoint.presentation.ChefMateEntrypoint
+import com.jmabilon.chefmate.feature.entrypoint.presentation.ChefMateEntrypointViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {

@@ -19,8 +19,6 @@ interface CollectionRepository {
     // CRUD
     // =============================================================================================
 
-    suspend fun getCollections(): Result<List<CollectionDomain>>
-
     suspend fun createCollection(collectionName: String): Result<CollectionDomain>
 
     suspend fun deleteCollection(collectionId: String): Result<Unit>

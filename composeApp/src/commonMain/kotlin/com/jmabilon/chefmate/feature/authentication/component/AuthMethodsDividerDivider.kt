@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
+import com.jmabilon.chefmate.core.designsystem.theme.ChefMateTheme
 
 @Composable
 fun AuthMethodsDivider(modifier: Modifier = Modifier) {

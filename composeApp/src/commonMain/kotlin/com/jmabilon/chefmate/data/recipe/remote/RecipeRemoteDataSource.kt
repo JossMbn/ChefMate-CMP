@@ -1,0 +1,41 @@
+package com.jmabilon.chefmate.data.recipe.remote
+
+import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
+
+interface RecipeRemoteDataSource {
+
+    // =============================================================================================
+    // Recipe
+    // =============================================================================================
+
+    suspend fun getRecipeById(recipeId: String): Result<RecipeDomain>
+
+    suspend fun createRecipe(
+        recipe: RecipeDomain,
+        collectionIds: List<String>
+    ): Result<RecipeDomain>
+
+    suspend fun deleteRecipe(recipeId: String): Result<Unit>
+
+    suspend fun updateRecipe(recipe: RecipeDomain): Result<RecipeDomain>
+
+    // =============================================================================================
+    // Images
+    // =============================================================================================
+
+    suspend fun fetchRecipeImageUrl(imagePath: String): Result<String>
+
+    suspend fun uploadRecipeImage(
+        recipeId: String,
+        imageData: ByteArray,
+        extension: String
+    ): Result<String>
+
+    suspend fun deleteRecipeImage(imagePath: String): Result<Unit>
+
+    // =============================================================================================
+    // AI Scanning
+    // =============================================================================================
+
+    suspend fun scanRecipeFromImage(imageData: List<Byte>): Result<RecipeDomain>
+}
