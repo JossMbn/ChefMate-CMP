@@ -1,16 +1,14 @@
 package com.jmabilon.chefmate.data.authentication
 
-import com.jmabilon.chefmate.data.authentication.source.remote.AuthenticationRemoteDataSource
-import com.jmabilon.chefmate.data.recipe.source.cache.CollectionCacheDataSource
-import com.jmabilon.chefmate.data.recipe.source.cache.RecipeCacheDataSource
+import com.jmabilon.chefmate.core.data.cache.DataCache
+import com.jmabilon.chefmate.data.authentication.remote.AuthenticationRemoteDataSource
 import com.jmabilon.chefmate.domain.authentication.repository.AuthenticationRepository
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.flow.Flow
 
 class AuthenticationRepositoryImpl(
     private val authenticationRemoteDataSource: AuthenticationRemoteDataSource,
-    private val collectionCacheDataSource: CollectionCacheDataSource,
-    private val recipeCacheDataSource: RecipeCacheDataSource
+    private val cache: DataCache
 ) : AuthenticationRepository {
 
     override val authStatus: Flow<SessionStatus>
@@ -39,8 +37,7 @@ class AuthenticationRepositoryImpl(
     override suspend fun signOut(): Result<Unit> {
         return authenticationRemoteDataSource.signOut()
             .onSuccess {
-                collectionCacheDataSource.invalidateAll()
-                recipeCacheDataSource.invalidateAll()
+                cache.clear()
             }
     }
 }

@@ -1,0 +1,9 @@
+package com.jmabilon.chefmate.data.recipe.remote.parameter
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class UpdateCollectionParameter(
+    @SerialName("name") val collectionName: String
+)

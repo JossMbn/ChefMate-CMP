@@ -1,50 +1,38 @@
 package com.jmabilon.chefmate.data.recipe
 
-import com.jmabilon.chefmate.data.recipe.source.cache.CollectionCacheDataSource
-import com.jmabilon.chefmate.data.recipe.source.cache.RecipeCacheDataSource
-import com.jmabilon.chefmate.data.recipe.source.remote.RecipeRemoteDataSource
+import com.jmabilon.chefmate.core.data.cache.CachePolicy
+import com.jmabilon.chefmate.core.data.cache.DataCache
+import com.jmabilon.chefmate.core.data.cache.createCachedFlow
+import com.jmabilon.chefmate.data.recipe.remote.RecipeRemoteDataSource
 import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
 import com.jmabilon.chefmate.domain.recipe.repository.RecipeRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.transformLatest
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipeRepositoryImpl(
     private val recipeRemoteDataSource: RecipeRemoteDataSource,
-    private val recipeCacheDataSource: RecipeCacheDataSource,
-    private val collectionCacheDataSource: CollectionCacheDataSource
+    private val cache: DataCache
 ) : RecipeRepository {
+
+    companion object {
+        private const val CACHE_KEY_PREFIX = "recipes"
+
+        private fun createRecipeCacheKey(recipeId: String): String = "$CACHE_KEY_PREFIX/$recipeId"
+    }
 
     // =============================================================================================
     // Observation
     // =============================================================================================
 
-    override fun observeRecipeById(recipeId: String): Flow<RecipeDomain> =
-        recipeCacheDataSource.observeRecipe(recipeId = recipeId)
-            .distinctUntilChanged()
-            .transformLatest { recipe ->
-                if (recipe == null) {
-                    emit(null)
-                    getRecipeById(recipeId = recipeId)
-                } else {
-                    emit(recipe)
-                }
-            }
-            .filterNotNull()
+    override fun observeRecipeById(recipeId: String): Flow<RecipeDomain> = cache.createCachedFlow(
+        key = createRecipeCacheKey(recipeId),
+        policy = CachePolicy(time = CachePolicy.Timeout.Never)
+    ) { recipeRemoteDataSource.getRecipeById(recipeId = recipeId) }
 
     // =============================================================================================
     // CRUD
     // =============================================================================================
-
-    override suspend fun getRecipeById(recipeId: String): Result<RecipeDomain> {
-        return recipeRemoteDataSource.getRecipeById(recipeId = recipeId)
-            .onSuccess { recipe ->
-                recipeCacheDataSource.cacheRecipe(recipe = recipe)
-            }
-    }
 
     override suspend fun createRecipe(
         recipe: RecipeDomain,
@@ -54,34 +42,31 @@ class RecipeRepositoryImpl(
             recipe = recipe,
             collectionIds = collectionIds
         )
-            .onSuccess { createdRecipe ->
-                recipeCacheDataSource.cacheRecipe(recipe = createdRecipe)
+            .onSuccess { recipe ->
+                cache.clear(shouldNotify = true)
+                cache.set(
+                    key = createRecipeCacheKey(recipe.id),
+                    value = recipe,
+                    timeout = CachePolicy.Timeout.Never
+                )
             }
     }
 
     override suspend fun deleteRecipe(recipeId: String): Result<Unit> {
         return recipeRemoteDataSource.deleteRecipe(recipeId = recipeId)
             .onSuccess {
-                recipeCacheDataSource.invalidate(recipeId = recipeId)
-                collectionCacheDataSource.invalidateAll()
+                cache.clear(shouldNotify = true)
             }
     }
 
-    override suspend fun updateRecipe(
-        recipeId: String,
-        recipe: RecipeDomain,
-        collectionIds: List<String>
-    ): Result<RecipeDomain> {
+    override suspend fun updateRecipe(recipe: RecipeDomain): Result<RecipeDomain> {
         return recipeRemoteDataSource.updateRecipe(
-            recipeId = recipeId,
-            recipe = recipe,
-            collectionIds = collectionIds
+            recipe = recipe
         )
-            .onSuccess { updatedRecipe ->
-                recipeCacheDataSource.updateRecipe(recipe = updatedRecipe)
+            .onSuccess {
+                cache.clear(shouldNotify = true)
             }
     }
-
 
     // =============================================================================================
     // Images
@@ -104,5 +89,9 @@ class RecipeRepositoryImpl(
 
     override suspend fun deleteRecipeImage(imagePath: String): Result<Unit> {
         return recipeRemoteDataSource.deleteRecipeImage(imagePath = imagePath)
+    }
+
+    override suspend fun scanRecipeFromImage(imageData: List<Byte>): Result<RecipeDomain> {
+        return recipeRemoteDataSource.scanRecipeFromImage(imageData = imageData)
     }
 }

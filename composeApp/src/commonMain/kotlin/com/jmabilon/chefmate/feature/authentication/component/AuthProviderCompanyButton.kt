@@ -14,8 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import chefmate.composeapp.generated.resources.Res
 import chefmate.composeapp.generated.resources.ic_local_dining_rounded_outlined
-import com.jmabilon.chefmate.designsystem.component.button.CMButton
-import com.jmabilon.chefmate.designsystem.theme.ChefMateTheme
+import com.jmabilon.chefmate.core.designsystem.component.button.CMButton
+import com.jmabilon.chefmate.core.designsystem.theme.ChefMateTheme
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
