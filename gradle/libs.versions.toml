@@ -18,14 +18,14 @@ androidx-lifecycle = "2.10.0"
 coroutines = "1.11.0"
 
 # Koin
-koin = "4.2.1"
-koin-compose = "4.2.1"
+koin = "4.2.2"
+koin-compose = "4.2.2"
 
 # Supabase
 supabaseBom = "3.6.0"
 
 # Ktor
-ktor = "3.5.0"
+ktor = "3.5.1"
 
 # Serialization
 kotlin-serialization = "1.11.0"
@@ -34,7 +34,7 @@ kotlin-serialization = "1.11.0"
 coil = "3.5.0"
 
 # BuildKonfig
-buildkonfig = "0.21.2"
+buildkonfig = "0.22.0"
 
 [libraries]
 # Android
