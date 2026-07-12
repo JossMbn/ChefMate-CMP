@@ -1,11 +1,20 @@
 package com.jmabilon.chefmate.core.designsystem.extension
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ripple
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -19,6 +28,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.jmabilon.chefmate.core.designsystem.theme.extension.shimmerInitialColor
+import com.jmabilon.chefmate.core.designsystem.theme.extension.shimmerTargetColor
 
 // =================================================================================================
 // Clickable
@@ -218,3 +229,45 @@ inline fun <T : Any> Modifier.ifNotNull(
     value: T?,
     modifier: Modifier.(T) -> Modifier
 ): Modifier = if (value != null) modifier(value) else this
+
+// =================================================================================================
+// Shimmer
+// =================================================================================================
+
+/**
+ * Applies a shimmer animation effect by cycling between two colors behind the content.
+ *
+ * Note: This modifier uses [composed] because it requires [rememberInfiniteTransition],
+ * which needs a Composition context.
+ *
+ * @param initialColor Starting color of the shimmer animation.
+ * @param targetColor Target color of the shimmer animation.
+ * @param durationMillis Duration of one animation cycle in milliseconds.
+ */
+fun Modifier.shimmerEffect(
+    initialColor: Color? = null,
+    targetColor: Color? = null,
+    durationMillis: Int = 800,
+): Modifier = composed {
+    val initialColor = initialColor ?: MaterialTheme.colorScheme.shimmerInitialColor
+    val targetColor = targetColor ?: MaterialTheme.colorScheme.shimmerTargetColor
+
+    val transition = rememberInfiniteTransition(label = "shimmer infinite animation")
+
+    val colorAnimation by transition.animateColor(
+        initialValue = initialColor,
+        targetValue = targetColor,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = durationMillis,
+                easing = LinearEasing,
+            ),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "shimmer color animation",
+    )
+
+    drawBehind {
+        drawRect(color = colorAnimation)
+    }
+}

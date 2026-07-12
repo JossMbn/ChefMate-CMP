@@ -6,7 +6,7 @@ package com.jmabilon.chefmate.core.common
  * @param OutputType The type to which the input will be converted.
  * @param InputType The type that will be converted to the output type.
  */
-interface Mapper<OutputType : Any, InputType : Any> {
+interface Mapper<OutputType, InputType> {
 
     fun convert(input: InputType): OutputType
 

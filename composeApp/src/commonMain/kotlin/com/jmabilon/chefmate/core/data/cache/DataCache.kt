@@ -11,19 +11,23 @@ import kotlinx.coroutines.flow.onStart
 
 interface DataCache {
 
-    suspend fun <T : Any> get(key: String): T?
+    suspend fun <T : Any> get(key: CacheKey): T?
 
-    suspend fun <T : Any> set(key: String, value: T, timeout: CachePolicy.Timeout)
+    suspend fun <T : Any> set(
+        key: CacheKey,
+        value: T,
+        timeout: CachePolicy.Timeout = CachePolicy.Timeout.Never
+    )
 
-    suspend fun clear(key: String, shouldNotify: Boolean = false) // Default: No notification
+    suspend fun clear(key: CacheKey, shouldNotify: Boolean = true)
 
-    suspend fun clear(shouldNotify: Boolean = false) // Default: No notification
+    suspend fun clear(shouldNotify: Boolean = true)
 
-    fun observe(key: String): Flow<Unit>
+    fun observe(key: CacheKey): Flow<Unit>
 }
 
 inline fun <reified T : Any> DataCache.createCachedFlow(
-    key: String,
+    key: CacheKey,
     policy: CachePolicy,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     crossinline block: suspend () -> Result<T>,
@@ -51,8 +55,8 @@ inline fun <reified T : Any> DataCache.createCachedFlow(
 }.flowOn(dispatcher)
 
 suspend inline fun <reified T : Any> FlowCollector<T>.emitCachedValueIfExists(
-    key: String,
-    noinline getFunction: suspend (String) -> T?
+    key: CacheKey,
+    noinline getFunction: suspend (CacheKey) -> T?
 ) {
     val cachedResult = getFunction(key)
     if (cachedResult != null) {

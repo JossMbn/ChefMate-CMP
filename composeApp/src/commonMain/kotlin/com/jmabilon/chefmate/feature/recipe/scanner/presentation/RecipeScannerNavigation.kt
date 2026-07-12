@@ -12,9 +12,7 @@ import kotlinx.serialization.Serializable
 // ==================================================================================
 
 @Serializable
-data class RecipeScannerRoute(
-    val type: RecipeScannerType
-)
+data object RecipeScannerRoute
 
 enum class RecipeScannerType {
     ImageScan

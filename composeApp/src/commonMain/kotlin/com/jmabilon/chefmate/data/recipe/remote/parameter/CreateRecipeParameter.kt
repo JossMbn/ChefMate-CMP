@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateRecipeParameter(
     @SerialName("p_recipe") val recipe: CreateOrUpdateRecipeRequest,
-    @SerialName("p_collection_ids") val collectionIds: List<String>
+    @SerialName("p_collection_ids") val cookbookIds: List<String>
 )

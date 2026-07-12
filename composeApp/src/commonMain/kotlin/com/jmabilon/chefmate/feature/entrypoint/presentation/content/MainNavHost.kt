@@ -13,8 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import com.jmabilon.chefmate.core.presentation.ObserveAsEvent
 import com.jmabilon.chefmate.core.presentation.SnackbarController
 import com.jmabilon.chefmate.feature.account.presentation.accountScreen
-import com.jmabilon.chefmate.feature.collection.details.presentation.collectionDetailsPage
-import com.jmabilon.chefmate.feature.collection.selection.presentation.collectionSelectionPage
+import com.jmabilon.chefmate.feature.cookbook.cookbooklist.presentation.cookbookListScreen
+import com.jmabilon.chefmate.feature.cookbook.details.presentation.cookbookDetailsPage
+import com.jmabilon.chefmate.feature.cookbook.selection.presentation.cookbookSelectionPage
 import com.jmabilon.chefmate.feature.home.presentation.HomeRoute
 import com.jmabilon.chefmate.feature.home.presentation.homeScreen
 import com.jmabilon.chefmate.feature.recipe.creation.presentation.manualRecipeCreationScreen
@@ -54,9 +55,10 @@ fun MainNavHost(modifier: Modifier = Modifier) {
             recipeDetailsScreen(controller = navController)
             recipeScannerScreen(controller = navController)
 
-            // Collection
-            collectionDetailsPage(controller = navController)
-            collectionSelectionPage(controller = navController)
+            // Cookbook
+            cookbookListScreen(controller = navController)
+            cookbookDetailsPage(controller = navController)
+            cookbookSelectionPage(controller = navController)
         }
     }
 }

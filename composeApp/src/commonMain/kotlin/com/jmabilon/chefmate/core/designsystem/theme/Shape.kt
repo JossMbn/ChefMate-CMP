@@ -14,7 +14,7 @@ val Shapes
         small = RoundedCornerShape(8.dp),
         medium = RoundedCornerShape(12.dp),
         large = RoundedCornerShape(16.dp),
-        extraLarge = RoundedCornerShape(24.dp)
+        extraLarge = RoundedCornerShape(28.dp)
     )
 
 val Shapes.bottomSheetShape: CornerBasedShape

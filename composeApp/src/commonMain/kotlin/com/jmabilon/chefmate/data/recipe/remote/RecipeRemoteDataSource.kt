@@ -12,7 +12,7 @@ interface RecipeRemoteDataSource {
 
     suspend fun createRecipe(
         recipe: RecipeDomain,
-        collectionIds: List<String>
+        cookbookIds: List<String>
     ): Result<RecipeDomain>
 
     suspend fun deleteRecipe(recipeId: String): Result<Unit>

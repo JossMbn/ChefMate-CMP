@@ -51,11 +51,11 @@ class RecipeRemoteDataSourceImpl(
 
     override suspend fun createRecipe(
         recipe: RecipeDomain,
-        collectionIds: List<String>
+        cookbookIds: List<String>
     ): Result<RecipeDomain> {
         val parameters = CreateRecipeParameter(
             recipe = recipe.toRequest(),
-            collectionIds = collectionIds
+            cookbookIds = cookbookIds
         )
 
         return supabaseClient.safeExecution {
@@ -83,7 +83,7 @@ class RecipeRemoteDataSourceImpl(
             UpdateRecipeParameter(
                 recipeId = recipe.id,
                 recipe = recipe.toRequest(),
-                collectionIds = recipe.collections.map { it.id }
+                cookbookIds = recipe.cookbooks.map { it.id }
             )
 
         return supabaseClient.safeExecution {

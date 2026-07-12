@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.jmabilon.chefmate.feature.collection.selection.presentation.CollectionSelectionRoute
+import com.jmabilon.chefmate.feature.cookbook.selection.presentation.CookbookSelectionRoute
 import com.jmabilon.chefmate.feature.recipe.creation.presentation.ManualRecipeCreationRoute
 import kotlinx.serialization.Serializable
 
@@ -28,7 +28,11 @@ interface RecipeDetailsNavigator {
 
     fun navigateToRecipeEdition(recipeId: String)
 
-    fun navigateToCollectionSelection(recipeId: String)
+    fun navigateToCookbookSelection(recipeId: String)
+
+    fun navigateToCookMode(recipeId: String)
+
+    fun navigateToEditRecipe(recipeId: String)
 }
 
 class RecipeDetailsNavigatorImpl(
@@ -43,8 +47,16 @@ class RecipeDetailsNavigatorImpl(
         controller?.navigate(ManualRecipeCreationRoute(recipeId = recipeId))
     }
 
-    override fun navigateToCollectionSelection(recipeId: String) {
-        controller?.navigate(CollectionSelectionRoute(recipeId = recipeId))
+    override fun navigateToCookbookSelection(recipeId: String) {
+        controller?.navigate(CookbookSelectionRoute(recipeId = recipeId))
+    }
+
+    override fun navigateToCookMode(recipeId: String) {
+        // Navigate to CookMode
+    }
+
+    override fun navigateToEditRecipe(recipeId: String) {
+        controller?.navigate(ManualRecipeCreationRoute(recipeId = recipeId))
     }
 }
 

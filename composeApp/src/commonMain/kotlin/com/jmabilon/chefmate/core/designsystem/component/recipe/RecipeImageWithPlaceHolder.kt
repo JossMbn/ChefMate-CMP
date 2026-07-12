@@ -27,7 +27,7 @@ fun RecipeImageWithPlaceHolder(
     imageUrl: String?,
     withLogo: Boolean = true
 ) {
-    var isImageStateError by remember { mutableStateOf(false) }
+    var isImageStateError by remember(imageUrl) { mutableStateOf(false) }
 
     Box(
         modifier = modifier

@@ -5,9 +5,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.jmabilon.chefmate.feature.account.presentation.AccountRoute
-import com.jmabilon.chefmate.feature.collection.details.presentation.CollectionDetailsRoute
+import com.jmabilon.chefmate.feature.cookbook.cookbooklist.presentation.CookbookListRoute
+import com.jmabilon.chefmate.feature.cookbook.details.presentation.CookbookDetailsRoute
 import com.jmabilon.chefmate.feature.recipe.creation.presentation.ManualRecipeCreationRoute
-import com.jmabilon.chefmate.feature.recipe.scanner.presentation.RecipeScannerRoute
 import com.jmabilon.chefmate.feature.recipe.scanner.presentation.RecipeScannerType
 import kotlinx.serialization.Serializable
 
@@ -31,7 +31,9 @@ interface HomeNavigator {
 
     fun navigateToAccountPage()
 
-    fun navigateToCollectionDetails(collectionId: String)
+    fun navigateToCookbookList()
+
+    fun navigateToCookbookDetails(cookbookId: String)
 
     fun navigateToRecipeScanner(type: RecipeScannerType)
 }
@@ -52,12 +54,16 @@ class HomeNavigatorImpl(
         controller?.navigate(AccountRoute)
     }
 
-    override fun navigateToCollectionDetails(collectionId: String) {
-        controller?.navigate(CollectionDetailsRoute(collectionId = collectionId))
+    override fun navigateToCookbookList() {
+        controller?.navigate(CookbookListRoute)
+    }
+
+    override fun navigateToCookbookDetails(cookbookId: String) {
+        controller?.navigate(CookbookDetailsRoute(cookbookId = cookbookId))
     }
 
     override fun navigateToRecipeScanner(type: RecipeScannerType) {
-        controller?.navigate(RecipeScannerRoute(type = type))
+        //controller?.navigate(RecipeScannerRoute(type = type))
     }
 }
 

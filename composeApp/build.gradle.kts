@@ -68,6 +68,7 @@ kotlin {
             // Coil
             implementation(libs.bundles.common.coil)
         }
+
         iosMain.dependencies {
             // Ktor
             implementation(libs.ktor.client.darwin)

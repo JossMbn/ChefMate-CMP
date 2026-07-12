@@ -60,7 +60,7 @@ class RecipeScannerViewModel(
     // =============================================================================================
 
     private fun loadData() {
-        when (args.type) {
+        /*when (args.type) {
             RecipeScannerType.ImageScan -> {
                 _state.update {
                     it.copy(
@@ -69,7 +69,7 @@ class RecipeScannerViewModel(
                     )
                 }
             }
-        }
+        }*/
     }
 
     private fun scanningImage(image: List<Byte>?) {

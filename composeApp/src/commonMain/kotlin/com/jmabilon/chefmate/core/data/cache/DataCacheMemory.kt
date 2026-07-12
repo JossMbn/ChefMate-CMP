@@ -1,5 +1,6 @@
 package com.jmabilon.chefmate.core.data.cache
 
+import com.jmabilon.chefmate.core.common.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
@@ -16,12 +17,12 @@ import kotlin.time.Duration
 class DataCacheMemory(private val timeProvider: TimeProvider = TimeProviderImpl()) : DataCache {
 
     private val cache = mutableMapOf<String, CacheEntry>()
-    private val cacheUpdates = MutableSharedFlow<String>(replay = 1) // Emits when cache changes
+    private val cacheUpdates = MutableSharedFlow<String>(extraBufferCapacity = 3) // Emits when cache changes
     private val mutex = Mutex() // Mutex to protect concurrent access to the cache
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun <T : Any> get(key: String): T? {
-        val entry = mutex.withLock { cache[key] }
+    override suspend fun <T : Any> get(key: CacheKey): T? {
+        val entry = mutex.withLock { cache[key.name] }
         return if (entry == null) {
             key.log("no cache entry")
             null
@@ -37,7 +38,7 @@ class DataCacheMemory(private val timeProvider: TimeProvider = TimeProviderImpl(
         }
     }
 
-    override suspend fun <T : Any> set(key: String, value: T, timeout: CachePolicy.Timeout) {
+    override suspend fun <T : Any> set(key: CacheKey, value: T, timeout: CachePolicy.Timeout) {
         val expiryDuration = when (timeout) {
             is CachePolicy.Timeout.MaxAge -> timeout.duration
             is CachePolicy.Timeout.PointInTime -> {
@@ -53,18 +54,21 @@ class DataCacheMemory(private val timeProvider: TimeProvider = TimeProviderImpl(
         val entry = CacheEntry(value, timeProvider.now() + expiryDuration)
         key.log("Setting cache Entry: $entry")
         mutex.withLock {
-            cache[key] = entry
+            cache[key.name] = entry
         }
 
         // Notify listeners
-        cacheUpdates.tryEmit(key)
+        val result = cacheUpdates.tryEmit(key.name)
+        if (!result) {
+            key.log("⛔⛔Failed to emit cache update")
+        }
     }
 
-    override suspend fun clear(key: String, shouldNotify: Boolean) {
+    override suspend fun clear(key: CacheKey, shouldNotify: Boolean) {
         mutex.withLock {
-            cache.remove(key)
+            cache.remove(key.name)
         }
-        if (shouldNotify) cacheUpdates.tryEmit(key) // Notify flow subscribers if required
+        if (shouldNotify) cacheUpdates.tryEmit(key.name) // Notify flow subscribers if required
     }
 
     override suspend fun clear(shouldNotify: Boolean) {
@@ -74,13 +78,13 @@ class DataCacheMemory(private val timeProvider: TimeProvider = TimeProviderImpl(
         if (shouldNotify) cacheUpdates.tryEmit("ALL") // Notify all subscribers if required
     }
 
-    override fun observe(key: String): Flow<Unit> {
+    override fun observe(key: CacheKey): Flow<Unit> {
         return cacheUpdates
-            .filter { it == key || it == "ALL" }
+            .filter { it == key.name || it == "ALL" }
             .map { /* no-op */ }
     }
 
-    private fun String.log(message: String) {
-        println("$this: $message")
+    private fun CacheKey.log(message: String) {
+        Logger.d(tag = "DataCacheMemory", message = "${this.name}: $message")
     }
 }

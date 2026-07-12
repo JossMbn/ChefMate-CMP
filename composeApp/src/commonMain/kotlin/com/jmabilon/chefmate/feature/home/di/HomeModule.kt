@@ -1,7 +1,7 @@
 package com.jmabilon.chefmate.feature.home.di
 
-import com.jmabilon.chefmate.feature.home.domain.usecase.GetHomeSortedCollectionsUseCase
-import com.jmabilon.chefmate.feature.home.domain.usecase.GetHomeSortedCollectionsUseCaseImpl
+import com.jmabilon.chefmate.feature.home.domain.usecase.GetHomeScreenDataUseCase
+import com.jmabilon.chefmate.feature.home.domain.usecase.GetHomeScreenDataUseCaseImpl
 import com.jmabilon.chefmate.feature.home.presentation.HomeViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -20,5 +20,5 @@ val homeModule = module {
     // UseCases
     // =================================================================================================
 
-    factoryOf(::GetHomeSortedCollectionsUseCaseImpl) { bind<GetHomeSortedCollectionsUseCase>() }
+    factoryOf(::GetHomeScreenDataUseCaseImpl) { bind<GetHomeScreenDataUseCase>() }
 }

@@ -11,5 +11,5 @@ data class RecipeDomain(
     val mainIngredients: List<RecipeIngredientDomain>,
     val ingredientSections: List<RecipeIngredientSectionDomain>,
     val instructions: List<RecipeInstructionDomain>,
-    val collections: List<RecipeCollectionInfoDomain>
+    val cookbooks: List<RecipeCookbookInfoDomain>
 )

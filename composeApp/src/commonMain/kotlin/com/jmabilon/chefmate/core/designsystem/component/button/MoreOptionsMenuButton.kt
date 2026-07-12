@@ -2,7 +2,6 @@ package com.jmabilon.chefmate.core.designsystem.component.button
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -54,7 +53,6 @@ fun MoreOptionsMenuButton(
         }
 
         DropdownMenu(
-            modifier = Modifier.width(180.dp),
             expanded = isContextMenuVisible,
             onDismissRequest = { isContextMenuVisible = false },
             shape = RoundedCornerShape(16.dp),

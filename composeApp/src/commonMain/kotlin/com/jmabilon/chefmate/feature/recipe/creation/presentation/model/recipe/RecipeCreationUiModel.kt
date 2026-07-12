@@ -25,7 +25,7 @@ data class RecipeCreationUiModel(
     val mainIngredients: ImmutableList<RecipeCreationIngredientUiModel> = persistentListOf(),
     val ingredientSections: ImmutableList<RecipeCreationIngredientSectionUiModel> = persistentListOf(),
     val instructions: ImmutableList<RecipeCreationInstructionUiModel> = persistentListOf(),
-    val collections: ImmutableList<String> = persistentListOf()
+    val cookbooks: ImmutableList<String> = persistentListOf()
 )
 
 // =================================================================================================
@@ -53,7 +53,7 @@ class RecipeCreationUiModelMapper(val imageBytes: List<Byte>) : Mapper<RecipeCre
             ingredientSections = input.ingredientSections.toRecipeCreationIngredientSectionUiModel()
                 .toImmutableList(),
             instructions = input.instructions.toRecipeCreationInstructionUiModel().toImmutableList(),
-            collections = input.collections.map { it.id }.toImmutableList()
+            cookbooks = input.cookbooks.map { it.id }.toImmutableList()
         )
     }
 

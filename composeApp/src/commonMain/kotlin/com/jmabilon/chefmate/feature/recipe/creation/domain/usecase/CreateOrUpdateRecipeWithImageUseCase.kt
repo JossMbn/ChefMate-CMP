@@ -35,7 +35,7 @@ class CreateOrUpdateRecipeWithImageUseCaseImpl(
                 if (recipe.id.isEmpty()) {
                     recipeRepository.createRecipe(
                         recipe = recipeWithImage,
-                        collectionIds = emptyList()
+                        cookbookIds = emptyList()
                     ).getOrThrow()
                 } else {
                     recipeRepository.updateRecipe(recipe = recipeWithImage).getOrThrow()

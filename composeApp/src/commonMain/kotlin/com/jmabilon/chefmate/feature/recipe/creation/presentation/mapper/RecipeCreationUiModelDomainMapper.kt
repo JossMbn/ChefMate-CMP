@@ -1,7 +1,7 @@
 package com.jmabilon.chefmate.feature.recipe.creation.presentation.mapper
 
 import com.jmabilon.chefmate.core.common.Mapper
-import com.jmabilon.chefmate.domain.recipe.model.RecipeCollectionInfoDomain
+import com.jmabilon.chefmate.domain.recipe.model.RecipeCookbookInfoDomain
 import com.jmabilon.chefmate.domain.recipe.model.RecipeDifficulty
 import com.jmabilon.chefmate.domain.recipe.model.RecipeDomain
 import com.jmabilon.chefmate.domain.recipe.model.RecipeIngredientDomain
@@ -36,7 +36,7 @@ class RecipeCreationUiModelDomainMapper : Mapper<RecipeDomain, RecipeCreationUiM
             mainIngredients = input.mainIngredients.toRecipeIngredientDomain(),
             ingredientSections = input.ingredientSections.toRecipeIngredientSectionDomain(),
             instructions = input.instructions.toRecipeInstructionDomain(),
-            collections = input.collections.toFakeRecipeCollectionInfoDomain()
+            cookbooks = input.cookbooks.toFakeRecipeCookbookInfoDomain()
         )
     }
 
@@ -72,11 +72,11 @@ class RecipeCreationUiModelDomainMapper : Mapper<RecipeDomain, RecipeCreationUiM
             )
         }
 
-    private fun List<String>.toFakeRecipeCollectionInfoDomain(): List<RecipeCollectionInfoDomain> =
-        this.map { collectionId ->
-            RecipeCollectionInfoDomain(
-                id = collectionId,
-                name = collectionId,
+    private fun List<String>.toFakeRecipeCookbookInfoDomain(): List<RecipeCookbookInfoDomain> =
+        this.map { cookbookId ->
+            RecipeCookbookInfoDomain(
+                id = cookbookId,
+                name = cookbookId,
                 systemType = null
             )
         }

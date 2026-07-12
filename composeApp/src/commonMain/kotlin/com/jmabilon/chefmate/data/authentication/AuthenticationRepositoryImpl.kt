@@ -37,7 +37,7 @@ class AuthenticationRepositoryImpl(
     override suspend fun signOut(): Result<Unit> {
         return authenticationRemoteDataSource.signOut()
             .onSuccess {
-                cache.clear()
+                cache.clear(false)
             }
     }
 }

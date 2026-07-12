@@ -31,7 +31,8 @@ data class RecipeDto(
     @SerialName("ingredient_sections")
     val ingredientSections: List<RecipeIngredientSectionDto> = emptyList(),
     val instructions: List<RecipeInstructionDto> = emptyList(),
-    val collections: List<RecipeCollectionInfoDto> = emptyList()
+    @SerialName("collections")
+    val cookbooks: List<RecipeCookbookInfoDto> = emptyList()
 )
 
 // =================================================================================================
@@ -52,7 +53,7 @@ class RecipeMapper : Mapper<RecipeDomain, RecipeDto> {
             mainIngredients = input.ingredients.toDomain(),
             ingredientSections = input.ingredientSections.toDomain(),
             instructions = input.instructions.toDomain(),
-            collections = input.collections.toDomain()
+            cookbooks = input.cookbooks.toDomain()
         )
     }
 }
