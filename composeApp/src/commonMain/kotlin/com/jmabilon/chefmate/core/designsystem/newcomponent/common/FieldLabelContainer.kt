@@ -1,4 +1,4 @@
-package com.jmabilon.chefmate.core.designsystem.component
+package com.jmabilon.chefmate.core.designsystem.newcomponent.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

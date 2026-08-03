@@ -12,9 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import com.jmabilon.chefmate.core.designsystem.component.FieldLabelContainer
 import com.jmabilon.chefmate.core.designsystem.component.textfield.DefaultFieldDecoration
 import com.jmabilon.chefmate.core.designsystem.extension.customClickable
+import com.jmabilon.chefmate.core.designsystem.newcomponent.common.FieldLabelContainer
 import com.jmabilon.chefmate.core.designsystem.sheet.CMTimePickerDialog
 
 @OptIn(ExperimentalMaterial3Api::class)

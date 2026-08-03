@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import com.jmabilon.chefmate.feature.account.presentation.AccountRoute
 import com.jmabilon.chefmate.feature.cookbook.cookbooklist.presentation.CookbookListRoute
 import com.jmabilon.chefmate.feature.cookbook.details.presentation.CookbookDetailsRoute
-import com.jmabilon.chefmate.feature.recipe.creation.presentation.ManualRecipeCreationRoute
+import com.jmabilon.chefmate.feature.recipe.creation2.presentation.RecipeEditorRoute
 import com.jmabilon.chefmate.feature.recipe.scanner.presentation.RecipeScannerType
 import kotlinx.serialization.Serializable
 
@@ -27,7 +27,7 @@ interface HomeNavigator {
 
     fun navigateBack()
 
-    fun navigateToCreateRecipe()
+    fun navigateToRecipeEditor()
 
     fun navigateToAccountPage()
 
@@ -46,8 +46,8 @@ class HomeNavigatorImpl(
         controller?.navigateUp()
     }
 
-    override fun navigateToCreateRecipe() {
-        controller?.navigate(ManualRecipeCreationRoute())
+    override fun navigateToRecipeEditor() {
+        controller?.navigate(RecipeEditorRoute)
     }
 
     override fun navigateToAccountPage() {

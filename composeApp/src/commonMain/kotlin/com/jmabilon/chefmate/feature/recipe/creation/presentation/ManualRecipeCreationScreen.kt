@@ -36,12 +36,12 @@ import chefmate.composeapp.generated.resources.ic_group_rounded_outlined
 import chefmate.composeapp.generated.resources.ic_link_rounded_outlined
 import chefmate.composeapp.generated.resources.ic_schedule_rounded_outlined
 import chefmate.composeapp.generated.resources.ic_timer_rounded_outlined
-import com.jmabilon.chefmate.core.designsystem.component.FieldLabelContainer
 import com.jmabilon.chefmate.core.designsystem.component.appbar.CMTopAppBar
 import com.jmabilon.chefmate.core.designsystem.component.appbar.TopAppBarBackIcon
 import com.jmabilon.chefmate.core.designsystem.component.button.AddTextButton
 import com.jmabilon.chefmate.core.designsystem.component.textfield.CMTextField
 import com.jmabilon.chefmate.core.designsystem.component.textfield.CMTextFieldIcon
+import com.jmabilon.chefmate.core.designsystem.newcomponent.common.FieldLabelContainer
 import com.jmabilon.chefmate.core.designsystem.provider.rememberImagePicker
 import com.jmabilon.chefmate.core.designsystem.theme.ChefMateTheme
 import com.jmabilon.chefmate.core.presentation.ObserveAsEvent
@@ -262,7 +262,7 @@ private fun ManualRecipeCreationScreenContent(
 ) {
     val imagePicker = rememberImagePicker(
         onImagePicked = { newImage ->
-            onAction(ManualRecipeCreationAction.OnImageChange(newImage))
+            //onAction(ManualRecipeCreationAction.OnImageChange(newImage))
         }
     )
 

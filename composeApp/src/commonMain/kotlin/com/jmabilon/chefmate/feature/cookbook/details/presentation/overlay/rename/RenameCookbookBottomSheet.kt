@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jmabilon.chefmate.core.designsystem.component.FieldLabelContainer
 import com.jmabilon.chefmate.core.designsystem.newcomponent.button.PrimaryButton
+import com.jmabilon.chefmate.core.designsystem.newcomponent.common.FieldLabelContainer
 import com.jmabilon.chefmate.core.designsystem.newcomponent.textfield.InputTextField
 import com.jmabilon.chefmate.core.designsystem.sheet.BottomSheetWithTitleContainer
 import com.jmabilon.chefmate.core.presentation.ObserveAsEvent

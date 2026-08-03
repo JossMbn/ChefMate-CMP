@@ -87,7 +87,7 @@ fun RecipeScannerInitializingScreenContent(
 ) {
     val imagePicker = rememberImagePicker(
         onImagePicked = { newImage ->
-            onAction(RecipeScannerAction.OnImagePick(newImage))
+            //onAction(RecipeScannerAction.OnImagePick(newImage))
         }
     )
 

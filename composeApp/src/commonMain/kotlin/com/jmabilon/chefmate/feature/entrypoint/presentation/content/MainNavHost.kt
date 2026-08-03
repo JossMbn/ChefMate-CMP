@@ -19,6 +19,7 @@ import com.jmabilon.chefmate.feature.cookbook.selection.presentation.cookbookSel
 import com.jmabilon.chefmate.feature.home.presentation.HomeRoute
 import com.jmabilon.chefmate.feature.home.presentation.homeScreen
 import com.jmabilon.chefmate.feature.recipe.creation.presentation.manualRecipeCreationScreen
+import com.jmabilon.chefmate.feature.recipe.creation2.presentation.recipeEditorPage
 import com.jmabilon.chefmate.feature.recipe.details.presentation.recipeDetailsScreen
 import com.jmabilon.chefmate.feature.recipe.scanner.presentation.recipeScannerScreen
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ fun MainNavHost(modifier: Modifier = Modifier) {
             accountScreen(controller = navController)
 
             // Recipe
+            recipeEditorPage(controller = navController)
             manualRecipeCreationScreen(controller = navController)
             recipeDetailsScreen(controller = navController)
             recipeScannerScreen(controller = navController)

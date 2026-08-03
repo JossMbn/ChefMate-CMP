@@ -65,7 +65,7 @@ private fun HomeScreen(
             HomeDialogState.ScanRecipe -> {
                 AddRecipeBottomSheet(
                     onDismissRequest = { onAction(HomeAction.OnDismissDialog) },
-                    onCreateFromScratch = navigator::navigateToCreateRecipe,
+                    onCreateFromScratch = navigator::navigateToRecipeEditor,
                     onScanFromCameraClick = { /* no-op */ },
                     onScanFromTextClick = { /* no-op */ },
                     onScanFromUrlClick = { /* no-op */ }
